@@ -1,0 +1,76 @@
+{% extends 'list.html' %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-header bg-dark">
+            <h3 class="card-title">
+                {{ title }}
+            </h3>
+        </div>
+        <br>
+
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>Abrir Día</h3>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <a href="{{ open_url }}" class="small-box-footer">
+                    Ir <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div> <br>
+            <br>
+            
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>Generar Ticket</h3>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <a href="{{ ticket_url }}" class="small-box-footer">
+                    Ir <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div><br>
+            <br>
+            
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-secondary">
+                    <div class="inner">
+                        <h3>Crear Producto</h3>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <a href="{{ product_url }}" class="small-box-footer">
+                    Ir <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div><br>
+            <br>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>Cerrar Día</h3>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <a href="{{ cerrar_url }}" class="small-box-footer">
+                    Más Info <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div><br>
+            <br>
+            
+        </div>
+        <br>
+    </div>
+{% endblock %}

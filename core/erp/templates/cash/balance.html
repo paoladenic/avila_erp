@@ -1,0 +1,134 @@
+{% extends 'list.html' %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-header bg-dark">
+            <h3 class="card-title">
+                <i class="fas fa-credit-card"></i>
+                {{ title }}
+            </h3>
+        </div>
+        <br>
+
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-secondary">
+                    <div class="inner">
+                        <h3>{{ monto_apertura|floatformat:"2"|default:"0.00" }}<sup style="font-size: 20px">€</sup></h3>
+                        <p>Monto Apertura</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <a href="{{ open_url }}" class="small-box-footer">
+                    Más Info <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div> <br>
+            <br>
+            
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ total_facturas|floatformat:"2"|default:"0.00" }}<sup style="font-size: 20px">€</sup></h3>
+                        <p>Total Facturas</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <a href="{{ factura_url }}" class="small-box-footer">
+                    Más Info <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div><br>
+            <br>
+            
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ total_tickets|floatformat:"2"|default:"0.00" }}<sup style="font-size: 20px">€</sup></h3>
+                        <p>Total Ticket</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <a href="{{ ticket_url }}" class="small-box-footer">
+                    Más Info <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div><br>
+            <br>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>-{{ total_gastos|floatformat:"2"|default:"0.00" }}<sup style="font-size: 20px">€</sup></h3>
+                        <p>Total Gastos</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <a href="{{ gasto_url }}" class="small-box-footer">
+                    Más Info <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div><br>
+            <br>
+            
+        </div>
+        <br>
+
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="bg-light">
+                    <div class="inner">
+                    </div>
+                </div>
+            </div> <br>
+            <br>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ total_ventas_efectivo|floatformat:"2"|default:"0.00" }}<sup style="font-size: 20px">€</sup></h3>
+                        <p>Operaciones en Efectivo</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+            </div> <br>
+            <br>
+            
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ total_ventas_tarjeta|floatformat:"2"|default:"0.00" }}<sup style="font-size: 20px">€</sup></h3>
+                        <p>Operaciones en Tarjeta</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                </div>
+            </div><br>
+            <br>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ total_caja_efectivo|floatformat:"2"|default:"0.00" }}<sup style="font-size: 20px">€</sup></h3>
+                        <p>Balance Caja Efectivo</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+            </div> <br>
+        </div>
+
+            
+        <div class="card-footer">
+            <a href="{{ list_url }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+{% endblock %}

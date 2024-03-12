@@ -1,0 +1,32 @@
+{% extends 'list.html' %}
+{% load static %}
+{% block head_list %}
+    <script src="{% static 'cash/js/open.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-header bg-dark">
+            <h3 class="card-title">
+                <i class="fas fa-credit-card"></i>
+                {{ title }}
+            </h3>
+        </div>
+        <div class="card-body bg-dark">
+            <h3 class="card-title"> Fecha cierre: {{ fecha_cierre }} </h3><br>
+            <h3 class="card-title"> Hora cierre: {{ hora_cierre }} </h3><br>
+        </div>
+        <div class="card-body bg-dark">
+            <h3 class="card-title"> Efectivo ESPERADO en la Caja: {{ total_caja_efectivo|floatformat:"2"|default:"0.00" }} €</h3><br>
+            <h3 class="card-title"> Efectivo en Caja: {{ monto_cierre|floatformat:"2"|default:"0.00" }} </h3><br>
+            <h3 class="card-title" style="color: red; font-weight: bold;"> Diferencia de Caja: {{ diferencia_caja|floatformat:"2"|default:"0.00" }} €</h3><br>
+        </div>
+    <div class="card-footer">
+        {% block buttons_list %}
+            <a href="{{ list_url }}" class="btn btn-warning">
+                <i class="fas fa-check"></i> Continuar
+            </a>
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'list.html' %}
+{% load static %}
+{% block head_list %}
+    <script src="{% static 'cash/js/open.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-header bg-dark">
+            <h3 class="card-title">
+                <i class="fas fa-credit-card"></i>
+                {{ title }}
+            </h3>
+        </div>
+        <div class="card-body bg-dark">
+            <h5 class="card-title" style="color: yellow; font-weight: bold;"> INFORME CIERRE DIA </h5><br>
+        </div>
+        <div class="card-body bg-dark">
+            <h3 class="card-title" style="color: orange; font-weight: bold;"> DETALLE APERTURA </h3><br>
+            <h3 class="card-title"> Fecha Apertura: {{ fecha_apertura }} </h3><br>
+            <h3 class="card-title"> Hora Apertura: {{ hora_apertura }} </h3><br>
+            <h3 class="card-title"> Monto Apertura: {{ monto_apertura }} </h3><br>
+            <h3 class="card-title"> Realizado por: {{ usuario_apertura }} </h3>
+        </div>
+        <div class="card-body bg-dark">
+            <h3 class="card-title" style="color: orange; font-weight: bold;"> DETALLE CIERRE </h3><br>
+            <h3 class="card-title"> Fecha cierre: {{ fecha_cierre }} </h3><br>
+            <h3 class="card-title"> Hora cierre: {{ hora_cierre }} </h3><br>
+            <h3 class="card-title"> Realizado por: {{ usuario_cierre }} </h3>
+        </div>
+        <div class="card-body bg-dark">
+            <h3 class="card-title"> Total ventas en EFECTIVO: {{ total_ventas_efectivo|floatformat:"2"|default:"0.00" }} €</h3><br>
+            <h3 class="card-title"> Total ventas en TARJETA: {{ total_ventas_tarjeta|floatformat:"2"|default:"0.00" }} €</h3><br>
+            <h3 class="card-title"> Total GASTOS Caja: {{ total_gastos|floatformat:"2"|default:"0.00" }} </h3><br>
+        </div>
+        <div class="card-body bg-dark">
+            <h3 class="card-title"> Dinero que hay en la caja: {{ monto_cierre|floatformat:"2"|default:"0.00" }} €</h3><br>
+            <h3 class="card-title" style="color: red; font-weight: bold;"> Diferencia caja: {{ diferencia_caja|floatformat:"2"|default:"0.00" }} €</h3><br>
+            <h3 class="card-title" style="color: orange; font-weight: bold;"> Banqueado: {{ monto_banqueado|floatformat:"2"|default:"0.00" }} €</h3><br>
+            <h3 class="card-title" style="color: yellow; font-weight: bold;"> Efectivo en caja para mañana: {{ monto_caja|floatformat:"2"|default:"0.00" }} €</h3><br>
+        </div>
+        <div class="card-body bg-dark">
+            <h3 class="card-title" style="color: green; font-weight: bold;"> ¡HASTA MAÑANA! </h3><br>
+        </div>
+    <div class="card-footer">
+        {% block buttons_list %}
+            <a href="{{ list_url }}" class="btn btn-success">
+                <i class="fas fa-check"></i> Finalizar
+            </a>
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<style>
+    @page { size: A7 portrait }
+    
+    .img-invoice {
+        width: 100px;
+        text-align: center;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #invoice thead tr th {
+        text-align: center;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    .centered-paragraph {
+        text-align: center;
+    }
+
+    .divider {
+        border: 1px solid black;
+        margin: 10px auto;
+    }
+</style>
+<body>
+    <img src="static/img/logo-ticket.png" class="img-invoice">
+    <p class="head">
+        {{ comp.name }}<br>
+        {{ comp.ruc }}<br>
+        {{ comp.address }}<br>
+        <strong>{{ comp.company|upper }}</strong>
+    </p>
+    <div style="border-top: 1px solid black;" class="divider"></div> <!-- Línea divisoria -->
+
+    <p class="centered-paragraph"> <!-- Párrafo centrado -->
+        <b>TICKET #</b> 2024-{{ ticket.id }}<br>
+        {{ ticket.date_joined|date:"d F Y  H:i" }}<br>
+    </p>
+
+    <table id="invoice">
+        <thead>
+            <tr>
+                <th style="width: 60%;">PRODUCTO</th>
+                <th style="width: 40%;">TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in ticket.detticket_set.all %}
+                <tr {% if forloop.first %}style="padding-top: 5px;" {% endif %}>
+                    <td class="text-center">{{ d.prod.name }}</td>
+                    <td class="text-center">{{ d.cant }} x {{ d.price }} = €{{ d.subtotal }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <table style="invoice2">
+        <thead>
+            <tr style="border-top: 1px solid black; padding-top: 4px;">
+                <th><b>MÉTODO DE PAGO: {{ ticket.tipo_pago.name }} </b></th>
+            </tr>
+            <tr style="border-top: 1px solid black; padding-top: 4px;">
+                <th><b>SUBTOTAL: €{{ ticket.subtotal }} </b></th>
+            </tr>
+            <tr style="padding-top: 0px;">
+                <th><b>IVA 21%: €{{ ticket.iva }} </b></th>
+            </tr>
+            <tr style="padding-top: 0px;">
+                <th><b>TOTAL A PAGAR: €{{ ticket.total }} </b></th>
+            </tr>
+        </thead>
+    </table>
+    
+    <table style="margin-top: 20px;">
+        <thead>
+        <tr>
+            <th>****GRACIAS POR SU COMPRA****</th>
+        </tr>
+        </thead>
+    </table>
+</body>
+</html>

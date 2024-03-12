@@ -1,0 +1,88 @@
+{% extends 'list.html' %}
+{% load static %}
+{% block head_list %}
+    <script src="{% static 'cash/js/open.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-header bg-dark">
+            <h3 class="card-title">
+                <i class="fas fa-credit-card"></i>
+                {{ title }}
+            </h3>
+        </div>
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h3 class="card-title">Cuenta el dinero el caja</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_1c" placeholder="1c">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_2c" placeholder="2c">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_5c" placeholder="5c">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_10c" placeholder="10c">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_20c" placeholder="20c">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_50c" placeholder="50c">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_1e" placeholder="1e">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_2e" placeholder="2e">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_5e" placeholder="5e">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_10e" placeholder="10e">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_20e" placeholder="20e">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_50e" placeholder="50e">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" id="input_100e" placeholder="100e">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-1">
+                        <input type="text" class="form-control"id="total" placeholder="Total" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                {% block buttons_list %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="total" id="total-input">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Confirmar
+                    </button>
+                    <a href="{{ list_url }}" class="btn btn-secondary">
+                        <i class="fas fa-ban"></i> Volver
+                    </a>
+                </form>
+                {% endblock %}
+            </div>
+        </div>
+{% endblock %}

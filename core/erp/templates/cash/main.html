@@ -1,0 +1,42 @@
+{% extends 'list.html' %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-header bg-dark">
+            <h3 class="card-title">
+                <i class="fas fa-credit-card"></i>
+                {{ title }}
+            </h3>
+        </div>
+        <div class="card-header bg-light"></div>
+        <div class="card-body">
+            <div class="btn-group" role="group" aria-label="Botones">
+                <div class="btn-wrapper" style="margin-right: 20px;">
+                    <a href="{{ create_url }}" class="btn-lg btn-warning">
+                        <i class="fas fa-lock-open"></i>  Abrir Día
+                    </a>
+                </div>
+                <div class="btn-wrapper" style="margin-right: 20px;">
+                    <a href="{{ gasto_url }}" class="btn-lg btn-dark">
+                        <i class="fas fa-minus"></i>  Gastos
+                    </a>
+                </div>
+                <div class="btn-wrapper" style="margin-right: 20px;">
+                    <a href="{{ balance_url }}" class="btn-lg btn-dark">
+                        <i class="fas fa-file"></i>  Status Día
+                    </a>
+                </div>
+                <div class="btn-wrapper" style="margin-right: 20px;">
+                    <a href="{{ close_url }}" class="btn-lg btn-warning">
+                        <i class="fas fa-lock"></i>  Cerrar Día
+                    </a>
+                </div>
+                <div class="btn-wrapper" style="margin-right: 20px;">
+                    <a href="{{ list_url }}" class="btn-lg btn-secondary">
+                        <i class="fas fa-chart-bar"></i>  Ver Informes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
