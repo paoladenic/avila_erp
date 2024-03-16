@@ -273,3 +273,80 @@ class ReportForm(Form):
         'class': 'form-control',
         'autocomplete': 'off'
     }))
+
+
+
+class TrabajoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['numero'].widget.attrs['autofocus'] = True
+
+    class Meta:
+        model = Trabajo
+        fields = '__all__'
+        widgets = {
+            'numero': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese el Número de Orden',
+                }
+            ),
+            'fecha_trabajo': DateInput(
+                format='%Y-%m-%d',
+                attrs={
+                    'value': datetime.now().strftime('%Y-%m-%d'),
+                    'autocomplete': 'off',
+                    'class': 'form-control datetimepicker-input',
+                    'id': 'fecha_trabajo',
+                    'data-target': '#fecha_trabajo',
+                    'data-toggle': 'datetimepicker'
+                }
+            ),
+            'nombre': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese el nombre',
+                }
+            ),
+            'apellido': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese los apellidos',
+                }
+            ),
+            'telefono': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese el teléfono',
+                }
+            ),
+            'vehiculo': TextInput(
+                attrs={
+                    'placeholder': 'Descripción y color del vehículo',
+                }
+            ),
+            'presupuesto': TextInput(
+                attrs={
+                    'placeholder': 'A Pagar',
+                }
+            ),
+            'detalle': Textarea(
+                attrs={
+                    'placeholder': 'Detalle del trabajo',
+                    'rows': 3,
+                    'cols': 3
+                }
+            ),
+            'status': Select(attrs={
+                'class': 'custom-select select2',
+            }),
+        }
+
+    def save(self, commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                instance = form.save()
+                data = instance.toJSON()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data

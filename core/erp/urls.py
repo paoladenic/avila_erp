@@ -6,6 +6,7 @@ from core.erp.views.product.views import *
 from core.erp.views.sale.views import *
 from core.erp.views.ticket.views import *
 from core.erp.views.cash.views import *
+from core.erp.views.taller.views import *
 
 app_name = 'erp'
 
@@ -53,4 +54,10 @@ urlpatterns = [
     path('cash/gasto_delete/<int:pk>/', GastoDeleteView.as_view(), name='gasto_delete'),
     path('cash/balance_dia/', BalanceDiaView.as_view(), name='balance_dia'),
     path('cash/report/', CashReportView.as_view(), name='cash_report'),
+    # taller
+    path('taller/list/', TrabajoListView.as_view(), name='trabajo_list'),
+    path('taller/add/', TrabajoCreateView.as_view(), name='trabajo_create'),
+    path('taller/update/<int:pk>/', TrabajoUpdateView.as_view(), name='trabajo_update'),
+    path('taller/delete/<int:pk>/', TrabajoDeleteView.as_view(), name='trabajo_delete'),
+     path('taller/invoice/pdf/<int:pk>/', TrabajoInvoicePdfView.as_view(), name='trabajo_invoice_pdf'),
 ]

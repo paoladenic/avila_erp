@@ -148,7 +148,7 @@ class BalanceDiaView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Status Día'
         context['list_url'] = reverse_lazy('erp:cash_flow')
-        context['open_url'] = reverse_lazy('erp:open_detail')
+        context['open_url'] = reverse_lazy('erp:cash_open')
         context['gasto_url'] = reverse_lazy('erp:gasto_list')
         context['factura_url'] = reverse_lazy('erp:sale_list')
         context['ticket_url'] = reverse_lazy('erp:ticket_list')
