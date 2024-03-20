@@ -46,14 +46,15 @@ class TipoPago(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=150, verbose_name='Nombre', unique=True)
+    name = models.CharField(max_length=300, verbose_name='Nombre', unique=True)
     cat = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría')
-    sku = models.CharField(max_length=13, verbose_name='SKU', unique=True, default='0000')
+    sku = models.CharField(max_length=30, verbose_name='SKU', unique=True, default='0000')
     description = models.TextField(verbose_name='Descripción', blank=True, null=True)
     image = models.ImageField(upload_to='product/%Y/%m/%d', null=True, blank=True, verbose_name='Imagen')
     stock = models.IntegerField(default=0, verbose_name='Stock')
     pc = models.DecimalField(default=0.00, max_digits=9, decimal_places=2, verbose_name='Precio de compra')
     pvp = models.DecimalField(default=0.00, max_digits=9, decimal_places=2, verbose_name='Precio de venta')
+    proveedor = models.CharField(max_length=150, verbose_name='Proveedor')
 
     def __str__(self):
         return self.name

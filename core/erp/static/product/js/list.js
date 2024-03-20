@@ -13,7 +13,7 @@ $(function () {
             dataSrc: ""
         },
         columns: [
-            {"data": "id"},
+            // {"data": "id"},
             {"data": "name"},
             {"data": "cat"},
             {"data": "sku"},
@@ -22,19 +22,12 @@ $(function () {
             {"data": "stock"},
             {"data": "pc"},
             {"data": "pvp"},
+            {"data": "proveedor"},
             {"data": "id"},
         ],
         columnDefs: [
             {
-                targets: [-8],
-                class: 'text-center',
-                orderable: false,
-                render: function (data, type, row) {
-                    return '<span>'+data+'</span>';
-                }
-            },
-            {
-                targets: [-7],
+                targets: [-9, -8, -7],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
@@ -46,20 +39,12 @@ $(function () {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    return '<span>'+data+'</span>';
-                }
-            },
-            {
-                targets: [-5],
-                class: 'text-center',
-                orderable: false,
-                render: function (data, type, row) {
                     var imageUrl = '<img src="' + data + '" class="img-thumbnail" style="cursor: pointer; width: 50px; height: 50px;" onclick="showImage(\'' + data + '\')">';
                     return imageUrl;
                 }
             },
             {
-                targets: [-4],
+                targets: [-5],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
@@ -70,7 +55,7 @@ $(function () {
                 }
             },
             {
-                targets: [-3],
+                targets: [-4, -3],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
@@ -82,11 +67,11 @@ $(function () {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    return '€' + parseFloat(data).toFixed(2);
+                    return '<span>'+data+'</span>';
                 }
             },
             {
-                targets: [-1],
+                targets: -1,
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {

@@ -13,18 +13,29 @@ $(function () {
             dataSrc: ""
         },
         columns: [
-            {"data": "id"},
+            // {"data": "id"},
             {"data": "name"},
-            {"data": "brand"},
             {"data": "cat"},
             {"data": "sku"},
             {"data": "description"},
             {"data": "image"},
+            {"data": "stock"},
+            {"data": "pc"},
+            {"data": "pvp"},
+            {"data": "proveedor"},
             {"data": "id"},
         ],
         columnDefs: [
             {
-                targets: [-2],
+                targets: [-9, -8, -7],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    return '<span>'+data+'</span>';
+                }
+            },
+            {
+                targets: [-6],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
@@ -33,7 +44,34 @@ $(function () {
                 }
             },
             {
-                targets: [-1],
+                targets: [-5],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    if(row.stock > 0){
+                        return '<span class="badge badge-success">'+data+'</span>'
+                    }
+                    return '<span class="badge badge-danger">'+data+'</span>'
+                }
+            },
+            {
+                targets: [-4, -3],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    return '€' + parseFloat(data).toFixed(2);
+                }
+            },
+            {
+                targets: [-2],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    return '<span>'+data+'</span>';
+                }
+            },
+            {
+                targets: -1,
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
