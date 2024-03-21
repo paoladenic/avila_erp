@@ -13,11 +13,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, ListView, DeleteView, UpdateView, View
 
-# from core.erp.forms import SaleForm, ClientForm
 from core.erp.mixins import ValidatePermissionRequiredMixin
 from core.erp.models import *
 from core.erp.forms import TicketForm
-from core.erp.models import Ticket, DetTicket
 from django.shortcuts import render
 from xhtml2pdf import pisa
 
@@ -26,8 +24,9 @@ from django.shortcuts import get_object_or_404
 from io import BytesIO
 from django.http import Http404
 from django.utils.timezone import make_aware
+from django.utils import timezone
+# from datetime import datetime
 import datetime
-
 
 
 
@@ -87,9 +86,6 @@ class TicketCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Crea
                 data = []
                 ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term'].strip()
-                # products = Product.objects.filter(stock__gt=0)
-                # if len(term):
-                #     products = products.filter(name__icontains=term, sku__icontains=term)
                 products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
                 for i in products.exclude(id__in=ids_exclude)[0:10]:
                     item = i.toJSON()
@@ -111,12 +107,20 @@ class TicketCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Crea
                 with transaction.atomic():
                     vents = json.loads(request.POST['vents'])
                     ticket = Ticket()
+
                     print(timezone.get_current_timezone())
                     print(timezone.now())
                     print(datetime.datetime.now())
                     print(vents['date_joined'])
-                    # ticket.date_joined = make_aware(vents['date_joined'], timezone=timezone.get_current_timezone())
-                    ticket.date_joined = vents['date_joined']
+                    print(type(vents['date_joined']))
+
+                    date_joined_str = vents['date_joined']
+                    date_joined = datetime.datetime.strptime(date_joined_str, '%Y-%m-%d %H:%M:%S')
+                    ticket.date_joined = make_aware(date_joined, timezone=timezone.get_current_timezone())
+
+                    print(date_joined)
+                    print(type(date_joined))
+
                     tipo_pago_id = int(vents['tipo_pago'])
                     tipo_pago_instance = TipoPago.objects.get(pk=tipo_pago_id)
                     ticket.tipo_pago = tipo_pago_instance
@@ -201,7 +205,11 @@ class TicketUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Upda
                     vents = json.loads(request.POST['vents'])
                     # sale = Sale.objects.get(pk=self.get_object().id)
                     ticket = self.get_object()
-                    ticket.date_joined = vents['date_joined']
+                    
+                    date_joined_str = vents['date_joined']
+                    date_joined = datetime.datetime.strptime(date_joined_str, '%Y-%m-%d %H:%M:%S')
+                    ticket.date_joined = make_aware(date_joined, timezone=timezone.get_current_timezone())
+
                     tipo_pago_id = int(vents['tipo_pago'])
                     tipo_pago_instance = TipoPago.objects.get(pk=tipo_pago_id)
                     ticket.tipo_pago = tipo_pago_instance

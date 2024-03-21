@@ -46,7 +46,7 @@ class TipoPago(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=300, verbose_name='Nombre', unique=True)
+    name = models.CharField(max_length=255, verbose_name='Nombre')
     cat = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría')
     sku = models.CharField(max_length=30, verbose_name='SKU', unique=True, default='0000')
     description = models.TextField(verbose_name='Descripción', blank=True, null=True)
@@ -313,16 +313,23 @@ class Trabajo(models.Model):
     telefono = models.CharField(max_length=150, verbose_name='Teléfono')
     vehiculo = models.CharField(max_length=150, verbose_name='Vehículo/Color')
     detalle = models.CharField(max_length=500, verbose_name='Detalle')
+    image = models.ImageField(upload_to='taller/%Y/%m/%d', null=True, blank=True, verbose_name='Imagen')
     presupuesto = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.ForeignKey(StatusTrabajo, on_delete=models.CASCADE, verbose_name='Status Trabajo')
 
     def __str__(self):
         return f"{self.numero} - {self.fecha_trabajo}"
+    
+    def get_image_url(self, image_field):
+        if image_field:
+            return '{}{}'.format(MEDIA_URL, image_field)
+        return '{}{}'.format(STATIC_URL, 'img/empty.png')
 
     def toJSON(self):
         item = model_to_dict(self)
         item['fecha_trabajo'] = self.fecha_trabajo.strftime('%Y-%m-%d')
         item['status'] = self.status.name
+        item['image'] = self.get_image_url(self.image)
         item['presupuesto'] = self.presupuesto
         return item
 
@@ -330,5 +337,4 @@ class Trabajo(models.Model):
         verbose_name = 'Trabajo'
         verbose_name_plural = 'Trabajos'
         ordering = ['-fecha_trabajo']
-
 

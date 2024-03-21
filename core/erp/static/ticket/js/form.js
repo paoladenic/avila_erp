@@ -351,7 +351,7 @@ $(function () {
             return false;
         }
 
-        vents.items.date_joined = $('input[name="date_joined"]').val() + ':00';
+        vents.items.date_joined = $('input[name="date_joined"]').val();
         vents.items.tipo_pago = $('select[name="tipo_pago"]').val();
         var parameters = new FormData();
         parameters.append('action', $('input[name="action"]').val());

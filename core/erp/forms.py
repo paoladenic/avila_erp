@@ -2,6 +2,7 @@ from datetime import datetime
 from django import forms
 from django.forms import *
 from django.forms import ModelForm
+from django.utils import timezone
 from core.erp.models import *
 
 
@@ -22,8 +23,8 @@ class CategoryForm(ModelForm):
             'desc': Textarea(
                 attrs={
                     'placeholder': 'Ingrese una descripción',
-                    'rows': 3,
-                    'cols': 3
+                    'rows': 2,
+                    'cols': 2
                 }
             ),
         }
@@ -330,7 +331,7 @@ class TrabajoForm(ModelForm):
                 attrs={
                     'placeholder': 'Detalle del trabajo',
                     'rows': 3,
-                    'cols': 3
+                    'cols': 2
                 }
             ),
             'status': Select(attrs={

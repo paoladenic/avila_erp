@@ -104,7 +104,7 @@ var report = {
             ],
             columns: [
                 {data: "id"},
-                {data: "date_joined"},
+                {data: "date_cash"},
                 {data: "tipo_pago"},
                 {data: "subtotal"},
                 {data: "iva"},
@@ -169,7 +169,7 @@ var report = {
                 if (tblReport.rows().count() > 0) {
                     var row = tblReport.row.add({
                         id: 'Total',
-                        date_joined: '',
+                        date_cash: '',
                         subtotal: '',
                         iva: '',
                         total: totalSum,
@@ -186,7 +186,7 @@ var report = {
 
 
 $(function () {
-    current_date = new moment().format('YYYY-MM-DD HH:mm:ss'); // Incluir hora en el formato de fecha
+    current_date = new moment().format('YYYY-MM-DD');
     input_date_range = $('input[name="date_range"]');
 
     input_date_range
@@ -194,7 +194,7 @@ $(function () {
                 language: 'auto',
                 startDate: new Date(),
                 locale: {
-                    format: 'YYYY-MM-DD HH:mm:ss', // Incluir hora en el formato de fecha
+                    format: 'YYYY-MM-DD',
                 },
                 autoApply: true,
             }

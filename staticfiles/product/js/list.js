@@ -13,11 +13,9 @@ $(function () {
             dataSrc: ""
         },
         columns: [
-            // {"data": "id"},
             {"data": "name"},
             {"data": "cat"},
             {"data": "sku"},
-            {"data": "description"},
             {"data": "image"},
             {"data": "stock"},
             {"data": "pc"},
@@ -26,14 +24,6 @@ $(function () {
             {"data": "id"},
         ],
         columnDefs: [
-            {
-                targets: [-9, -8, -7],
-                class: 'text-center',
-                orderable: false,
-                render: function (data, type, row) {
-                    return '<span>'+data+'</span>';
-                }
-            },
             {
                 targets: [-6],
                 class: 'text-center',
@@ -55,7 +45,7 @@ $(function () {
                 }
             },
             {
-                targets: [-4, -3],
+                targets: [-3, -4],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
