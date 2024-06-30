@@ -38,6 +38,7 @@ pyphen==0.14.0
 pypng==0.20220715.0
 python-bidi==0.4.2
 python-dotenv==1.0.1
+pytz==2024.1
 PyYAML==6.0.1
 qrcode==7.4.2
 reportlab==4.0.9

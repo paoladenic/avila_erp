@@ -104,7 +104,7 @@ var report = {
             ],
             columns: [
                 {data: "id"},
-                {data: "date_joined"},
+                {data: "date_cash"},
                 {data: "tipo_pago"},
                 {data: "subtotal"},
                 {data: "iva"},
@@ -112,13 +112,6 @@ var report = {
                 {data: "id"},
             ],
             columnDefs: [
-                {
-                    targets: [-5],
-                    class: 'text-center',
-                    render: function (data, type, row) {
-                        return data;
-                    }
-                },
                 {
                     targets: [-3, -4],
                     class: 'text-center',
@@ -153,10 +146,8 @@ var report = {
 
             },
             initComplete: function (settings, json) {
-                // Inicializar totalSum a 0 cada vez que se completa la tabla
                 totalSum = 0;
                 
-                // Iterar sobre los datos en la tabla y sumar los valores de la columna "Total"
                 tblReport.rows().every(function () {
                     var data = this.data();
                     var numericValue = parseFloat(data.total);
@@ -169,15 +160,15 @@ var report = {
                 if (tblReport.rows().count() > 0) {
                     var row = tblReport.row.add({
                         id: 'Total',
-                        date_joined: '',
+                        date_cash: '',
+                        tipo_pago: '',
                         subtotal: '',
                         iva: '',
                         total: totalSum,
                     }).draw().node();
 
                     // Aplicar formato a la fila total si es necesario
-                    $(row).addClass('text-bold');  // Agrega una clase para resaltar la fila total
-                    // ... resto del código ...
+                    $(row).addClass('text-bold');
                 }  
             }
         });
@@ -186,7 +177,7 @@ var report = {
 
 
 $(function () {
-    current_date = new moment().format('YYYY-MM-DD HH:mm:ss'); // Incluir hora en el formato de fecha
+    current_date = new moment().format('YYYY-MM-DD');
     input_date_range = $('input[name="date_range"]');
 
     input_date_range
@@ -194,7 +185,7 @@ $(function () {
                 language: 'auto',
                 startDate: new Date(),
                 locale: {
-                    format: 'YYYY-MM-DD HH:mm:ss', // Incluir hora en el formato de fecha
+                    format: 'YYYY-MM-DD',
                 },
                 autoApply: true,
             }

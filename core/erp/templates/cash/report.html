@@ -32,7 +32,7 @@
                         <label class="form-label fw-bold">Rango de Fechas:</label>
                         <div class="input-group mb-3">
                             {{ form.date_range }}
-                            <button class="btn btn-wwarning btnSearchAll" type="button">
+                            <button class="btn btn-warning btnSearchAll" type="button">
                                 <i class="fas fa-calendar-check"></i> Todos los Registros
                             </button>
                         </div>
@@ -61,42 +61,9 @@
                 </div>
             </div>
     </div>
-    {% comment %} <div class="card-body">
-        <div class="row">
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <label>Rango de Fechas:</label>
-                        {{ form.date_range }}
-                </div>
-            </div>
-        </div>
-        <hr>
-        <table class="table table-bordered" id="data">
-            <thead>
-            <tr>
-                <th scope="col">Fecha Banqueado</th>
-                <th scope="col">Total Venta Tarjeta</th>
-                <th scope="col">Total Venta Efectivo</th>
-                <th scope="col">Total Gastos</th>
-                <th scope="col">Dinero en caja</th>
-                <th scope="col">Diferencia Caja</th>
-                <th scope="col">Dinero que queda en Caja</th>
-                <th scope="col">Monto Banqueado</th>
-                <th scope="col">Realizado por</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div> {% endcomment %}
-    <div class="card-footer">
-        <a href="{{ list_url }}" class="btn btn-secondary">
-            <i class="fas fa-sync"></i> Actualizar
-        </a>
-    </div>
     <div class="card-footer">
         <a href="{{ back_url }}" class="btn btn-dark">
-            <i class="fas fa-arrow-left"></i> Volver
+            <i class="fas fa-arrow-left"></i> Cash Flow
         </a>
     </div>
 </div>

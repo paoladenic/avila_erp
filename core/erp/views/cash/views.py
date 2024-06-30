@@ -1,4 +1,3 @@
-# from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -22,8 +21,17 @@ from django.http import JsonResponse
 from django.views.generic import TemplateView
 import json
 
+import pytz
+from decimal import Decimal
+
 from django.http import HttpResponse
 from django.views.generic import FormView
+
+from django.http import Http404
+from django.utils.timezone import make_aware
+from django.utils import timezone
+# from datetime import datetime
+import datetime
 
 
 
@@ -56,20 +64,19 @@ class CashOpenView(LoginRequiredMixin, FormView):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        # Verificar si ya hay una apertura para este día
-        fecha_apertura = timezone.now().date()
+        local_timezone = pytz.timezone('Europe/Madrid')
+        fecha_apertura = timezone.localtime(timezone.now(), local_timezone).date()
         if AbrirCaja.objects.filter(fecha_apertura=fecha_apertura).exists():
-            # Si ya existe un registro de apertura para este día, redirigir a la página de detalle
             return redirect('erp:open_detail')
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
+        local_timezone = pytz.timezone('Europe/Madrid')
         usuario = self.request.user
-        fecha_apertura = timezone.now().date()
-        hora_apertura = timezone.now().time()
+        fecha_apertura = timezone.localtime(timezone.now(), local_timezone).date()
+        hora_apertura = timezone.localtime(timezone.now(), local_timezone).time()
         monto_apertura = form.cleaned_data['total']
         abrir_caja = AbrirCaja(usuario=usuario, fecha_apertura=fecha_apertura, hora_apertura=hora_apertura, monto_apertura=monto_apertura)
-        # abrir_caja = AbrirCaja(usuario=usuario, fecha_apertura=fecha_apertura, monto_apertura=monto_apertura)
         abrir_caja.save()
         return super().form_valid(form)
     
@@ -78,6 +85,12 @@ class CashOpenView(LoginRequiredMixin, FormView):
         context['title'] = 'Abrir Día'
         context['list_url'] = reverse_lazy('erp:cash_flow')
         context['entity'] = 'AbrirDia'
+
+        # fecha_actual = timezone.now().date()
+
+        # banqueado_caja = BanqueadoCaja.objects.filter(fecha_banqueado=fecha_actual).first()
+        # context['monto_caja'] = banqueado_caja.monto_caja if banqueado_caja else 0.00
+
         return context
 
 class CashOpenDetailView(LoginRequiredMixin, TemplateView):
@@ -179,25 +192,22 @@ class BalanceDiaView(LoginRequiredMixin, TemplateView):
 
         # Obtener el monto total de ventas y tickets en tarjeta y efectivo del día actual
         ventas = Sale.objects.filter(date_joined=fecha_actual).aggregate(
-            total_tarjeta=Sum('total', filter=Q(tipo_pago__name='Tarjeta')),
-            total_efectivo=Sum('total', filter=Q(tipo_pago__name='Efectivo'))
+            total_tarjeta=Sum('card'),
+            total_efectivo=Sum('cash')
         )
         tickets = Ticket.objects.filter(date_cash=fecha_actual).aggregate(
-            total_tarjeta=Sum('total', filter=Q(tipo_pago__name='Tarjeta')),
-            total_efectivo=Sum('total', filter=Q(tipo_pago__name='Efectivo'))
+            total_tarjeta=Sum('card'),
+            total_efectivo=Sum('cash')
         )
-
-        # total_tarjeta = (ventas['total_tarjeta'] or 0.00) + (tickets['total_tarjeta'] or 0.00)
-        # total_efectivo = (ventas['total_efectivo'] or 0.00) + (tickets['total_efectivo'] or 0.00)
         total_tarjeta = (float(ventas['total_tarjeta'] or Decimal('0.00'))) + (float(tickets['total_tarjeta'] or Decimal('0.00')))
         total_efectivo = (float(ventas['total_efectivo'] or Decimal('0.00'))) + (float(tickets['total_efectivo'] or Decimal('0.00')))
         context['total_ventas_tarjeta'] = total_tarjeta
         context['total_ventas_efectivo'] = total_efectivo
+        
 
         if total_gastos is None:
             total_gastos = Decimal('0.00')
 
-        # total_caja_efectivo = (abrir_caja.monto_apertura + total_efectivo) - total_gastos
         total_caja_efectivo = (monto_apertura + Decimal(total_efectivo)) - Decimal(total_gastos)
         context['total_caja_efectivo'] = total_caja_efectivo
         
@@ -215,16 +225,21 @@ class CashCloseView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         # Verificar si ya hay una apertura para este día
-        fecha_banqueado = timezone.now().date()
+        # fecha_banqueado = timezone.now().date()
+        local_timezone = pytz.timezone('Europe/Madrid')
+        fecha_banqueado = timezone.localtime(timezone.now(), local_timezone).date()
         if BanqueadoCaja.objects.filter(fecha_banqueado=fecha_banqueado).exists():
             # Si ya existe un registro de apertura para este día, redirigir a la página de detalle
             return redirect('erp:close_detail2')
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
+        local_timezone = pytz.timezone('Europe/Madrid')
         usuario = self.request.user
-        fecha_cierre = timezone.now().date()
-        hora_cierre = timezone.now().time()
+        fecha_cierre = timezone.localtime(timezone.now(), local_timezone).date()
+        hora_cierre = timezone.localtime(timezone.now(), local_timezone).time()
+        # fecha_cierre = timezone.now().date()
+        # hora_cierre = timezone.now().time()
         monto_cierre = form.cleaned_data['total']
         cerrar_caja = CerrarCaja(usuario=usuario, fecha_cierre=fecha_cierre, hora_cierre=hora_cierre, monto_cierre=monto_cierre)
         cerrar_caja.save()
@@ -242,9 +257,9 @@ class CashCloseView(LoginRequiredMixin, FormView):
             context['monto_apertura'] = abrir_caja.monto_apertura if abrir_caja else 0.00
 
             # Obtener el monto total de ventas y tickets en tarjeta y efectivo del día actual
-            ventas = Sale.objects.filter(date_joined=fecha_actual).aggregate(total_efectivo=Sum('total', filter=Q(tipo_pago__name='Efectivo')))
-            tickets = Ticket.objects.filter(date_cash=fecha_actual).aggregate(total_efectivo=Sum('total', filter=Q(tipo_pago__name='Efectivo')))
-            # total_efectivo = (ventas['total_efectivo'] or 0.00) + (tickets['total_efectivo'] or 0.00)
+            ventas = Sale.objects.filter(date_joined=fecha_actual).aggregate(total_efectivo=Sum('cash'))
+            tickets = Ticket.objects.filter(date_cash=fecha_actual).aggregate(total_efectivo=Sum('cash'))
+
             total_efectivo = (float(ventas['total_efectivo'] or Decimal('0.00'))) + (float(tickets['total_efectivo'] or Decimal('0.00')))
             context['total_ventas_efectivo'] = total_efectivo
 
@@ -279,8 +294,8 @@ class CashCloseDetailView(LoginRequiredMixin, TemplateView):
 
         abrir_caja = AbrirCaja.objects.filter(fecha_apertura=fecha_actual).first()
         context['monto_apertura'] = abrir_caja.monto_apertura if abrir_caja else 0.00
-        ventas = Sale.objects.filter(date_joined=fecha_actual).aggregate(total_efectivo=Sum('total', filter=Q(tipo_pago__name='Efectivo')))
-        tickets = Ticket.objects.filter(date_cash=fecha_actual).aggregate(total_efectivo=Sum('total', filter=Q(tipo_pago__name='Efectivo')))
+        ventas = Sale.objects.filter(date_joined=fecha_actual).aggregate(total_efectivo=Sum('cash'))
+        tickets = Ticket.objects.filter(date_cash=fecha_actual).aggregate(total_efectivo=Sum('cash'))
         total_efectivo = (float(ventas['total_efectivo'] or Decimal('0.00'))) + (float(tickets['total_efectivo'] or Decimal('0.00')))
         context['total_ventas_efectivo'] = total_efectivo
         total_gastos = GastoCaja.objects.filter(fecha_gasto=timezone.now().date()).aggregate(Sum('monto_gasto'))['monto_gasto__sum']
@@ -325,12 +340,12 @@ class CashCloseBanqueadoView(LoginRequiredMixin, FormView):
         total_gastos = GastoCaja.objects.filter(fecha_gasto=timezone.now().date()).aggregate(Sum('monto_gasto'))['monto_gasto__sum']
         total_gastos = total_gastos if total_gastos else 0.00
         ventas = Sale.objects.filter(date_joined=timezone.now().date()).aggregate(
-            total_tarjeta=Sum('total', filter=Q(tipo_pago__name='Tarjeta')),
-            total_efectivo=Sum('total', filter=Q(tipo_pago__name='Efectivo'))
+            total_tarjeta=Sum('card'),
+            total_efectivo=Sum('cash')
         )
         tickets = Ticket.objects.filter(date_cash=timezone.now().date()).aggregate(
-            total_tarjeta=Sum('total', filter=Q(tipo_pago__name='Tarjeta')),
-            total_efectivo=Sum('total', filter=Q(tipo_pago__name='Efectivo'))
+            total_tarjeta=Sum('card'),
+            total_efectivo=Sum('cash')
         )
 
         total_ventas_efectivo = (float(ventas['total_efectivo'] or Decimal('0.00'))) + (float(tickets['total_efectivo'] or Decimal('0.00')))
@@ -427,7 +442,7 @@ class GastoListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListVie
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for i in GastoCaja.objects.all():
+                for i in GastoCaja.objects.all().order_by('-fecha_gasto'):
                     data.append(i.toJSON())
             else:
                 data['error'] = 'Ha ocurrido un error'

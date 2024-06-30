@@ -1,0 +1,187 @@
+{% extends 'form.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block head_form %}
+    <link href="{% static 'lib/jquery-ui-1.12.1/jquery-ui.min.css' %}" rel="stylesheet"/>
+    <script src="{% static 'lib/jquery-ui-1.12.1/jquery-ui.min.js' %}"></script>
+
+    <link href="{% static 'lib/select2-4.0.13/css/select2.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'lib/select2-4.0.13/css/select2-bootstrap4.min.css' %}" rel="stylesheet"/>
+    <script src="{% static 'lib/select2-4.0.13/js/select2.min.js' %}"></script>
+    <script src="{% static 'lib/select2-4.0.13/js/i18n/es.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <form id="frmTrabajo2" method="post">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Nuevo Registro</h3>
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden" name="action" value="{{ action }}">
+                        <div class="form-group">
+                            <label>Número:</label>
+                            {{ form.numero }}
+                        </div>
+                        <div class="form-group">
+                            <label>Status:</label>
+                            {{ form.status }}
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Trabajo:</label>
+                            {{ form.fecha_trabajo }}
+                        </div>
+                        <div class="form-group">
+                            <label>Cliente:</label>
+                            <div class="input-group">
+                                {{ form.cliente }}
+                                <div class="input-group-append">
+                                    <button class="btn btn-dark btn-flat btnAddCliente" type="button">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Detalle:</label>
+                            {{ form.detalle }}
+                        </div>
+                        <div class="form-group">
+                            <label>Imagen:</label>
+                            {{ form.image }}
+                        </div>
+                        <div class="form-group">
+                            <label>Presupuesto:</label>
+                            {{ form.presupuesto }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-warning btn-flat">
+                <i class="fas fa-save"></i> Guardar registro
+            </button>
+            <a href="{{ list_url }}" class="btn btn-danger btn-flat">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModalCliente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form id="frmCliente" enctype="multipart/form-data" method="post">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                            <b><i class="fas fa-user-plus"></i> Nuevo registro de un cliente</b>
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {% for field in frmCliente.visible_fields %}
+                            <div class="form-group">
+                                <label>{{ field.label }}:</label>
+                                {{ field|add_class:'form-control'|attr:'autocomplete:off' }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-dark btn-block btn-flat">
+                            <i class="fas fa-save"></i> Guardar Cliente
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+
+
+{% block javascript %}
+    <script type="application/javascript">
+        $(function () {
+            $('.select2').select2({
+                theme: "bootstrap4",
+                language: 'es'
+            });
+
+            $('select[name="status"].select2').select2({
+                theme: "bootstrap4",
+                language: 'es'
+            });
+
+            $('select[name="cliente"]').select2({
+                theme: "bootstrap4",
+                language: 'es',
+                allowClear: true,
+                ajax: {
+                    delay: 250,
+                    type: 'POST',
+                    url: window.location.pathname,
+                    data: function (params) {
+                        var queryParameters = {
+                            term: params.term,
+                            action: 'search_clients'
+                        }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    },
+                },
+                placeholder: 'Ingrese una descripción',
+                minimumInputLength: 1,
+            });
+
+            $('.btnAddCliente').on('click', function () {
+                $('#myModalCliente').modal('show');
+            });
+            
+            $('#myModalCliente').on('hidden.bs.modal', function (e) {
+                $('#frmCliente').trigger('reset');
+            })
+
+            $('#frmCliente').on('submit', function (e) {
+                e.preventDefault();
+                var parameters = new FormData(this);
+                parameters.append('action', 'create_client');
+                submit_with_ajax(window.location.pathname, 'Notificación',
+                    '¿Estas seguro de crear al siguiente cliente?', parameters, function (response) {
+                        //console.log(response);
+                        var newOption = new Option(response.full_name, response.id, false, true);
+                        $('select[name="cliente"]').append(newOption).trigger('change');
+                        $('#myModalCliente').modal('hide');
+                    });
+            });
+
+            $('#frmTrabajo2').on('submit', function (e) {
+                e.preventDefault();
+                var parameters = new FormData(this);
+                var action = $('input[name="action"]').val();
+                parameters.append('action', action);
+                submit_with_ajax(window.location.pathname, 'Notificación',
+                    '¿Estas seguro de realizar la siguiente acción?', parameters, function (response) {
+                        alert_action('Notificación', '¿Desea imprimir la boleta de venta?', function () {
+                            window.open('/erp/taller/invoice2/pdf/' + response.id + '/', '_blank');
+                            location.href = '/erp/taller/list2/';
+                        }, function () {
+                            location.href = '/erp/taller/list2/';
+                        });
+                });
+            });
+
+        });
+    </script>
+{% endblock %}
+
+

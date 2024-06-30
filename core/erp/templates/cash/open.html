@@ -12,6 +12,9 @@
                 {{ title }}
             </h3>
         </div>
+        {% comment %} <div class="card-body bg-dark">
+            <h3 class="card-title" style="color: yellow; font-weight: bold;"> Efectivo ESPERADO en la Caja: {{ monto_caja|floatformat:"2"|default:"0.00" }} € </h3><br>
+        </div> {% endcomment %}
         <div class="card bg-dark">
             <div class="card-header">
                 <h3 class="card-title">Cuenta el dinero el caja</h3>

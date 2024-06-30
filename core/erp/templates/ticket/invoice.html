@@ -3,7 +3,7 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <style>
-    @page { size: 226pt 310pt; }
+    @page { size: 226pt 380pt; }
     
     .img-invoice {
         width: 100px;
@@ -48,6 +48,7 @@
 </style>
 <body>
     <img src="static/img/logo-ticket.png" class="img-invoice">
+    {% comment %} <img src="/home/avilabikes/avila_erp/static/img/logo-ticket.png" class="img-invoice"> {% endcomment %}
     <p class="head">
         {{ comp.name }}<br>
         {{ comp.ruc }}<br>
@@ -72,7 +73,7 @@
             {% for d in ticket.detticket_set.all %}
                 <tr {% if forloop.first %}style="padding-top: 5px;" {% endif %}>
                     <td class="text-center">{{ d.prod.name }}</td>
-                    <td class="text-center">{{ d.cant }} x {{ d.price }} = €{{ d.subtotal }}</td>
+                    <td class="text-center">{{ d.cant }} x {{ d.price }} = {{ d.subtotal }}€</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -81,16 +82,25 @@
     <table style="invoice2">
         <thead>
             <tr style="border-top: 1px solid black; padding-top: 4px;">
-                <th><b>MÉTODO DE PAGO: {{ ticket.tipo_pago.name }} </b></th>
+                <th><b>SUBTOTAL: {{ ticket.subtotal }}€ </b></th>
+            </tr>
+            <tr style="padding-top: 0px;">
+                <th><b>IVA 21%: {{ ticket.iva }}€ </b></th>
+            </tr>
+            <tr style="padding-top: 0px;">
+                <th><b>DESCUENTO: -{{ ticket.desc }}€ </b></th>
+            </tr>
+            <tr style="padding-top: 0px;">
+                <th><b>TOTAL PAGADO: {{ ticket.total }}€ </b></th>
             </tr>
             <tr style="border-top: 1px solid black; padding-top: 4px;">
-                <th><b>SUBTOTAL: €{{ ticket.subtotal }} </b></th>
+                <th><b>MÉTODO DE PAGO: {{ ticket.tipo_pago.name }} </b></th>
             </tr>
             <tr style="padding-top: 0px;">
-                <th><b>IVA 21%: €{{ ticket.iva }} </b></th>
+                <th><b>EFECTIVO: {{ ticket.cash }}€ </b></th>
             </tr>
             <tr style="padding-top: 0px;">
-                <th><b>TOTAL A PAGAR: €{{ ticket.total }} </b></th>
+                <th><b>TARJETA: {{ ticket.card }}€ </b></th>
             </tr>
         </thead>
     </table>

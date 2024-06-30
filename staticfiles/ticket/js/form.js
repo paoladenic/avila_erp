@@ -2,11 +2,15 @@ var tblProducts;
 var tblSearchProducts;
 var vents = {
     items: {
-        date_joined: '',
+        date_cash: '',
         tipo_pago: '',
         subtotal: 0.00,
         iva: 0.00,
+        desc: 0.00,
         total: 0.00,
+        cash: 0.00,
+        card: 0.00,
+        pagado: 0.00,
         products: []
     },
     get_ids: function () {
@@ -19,20 +23,29 @@ var vents = {
     calculate_invoice: function () {
         var subtotal = 0.00;
         var iva = $('input[name="iva"]').val();
-        var discount = parseFloat($('input[name="discount"]').val()) || 0;
-
+        var desc = parseFloat($('input[name="desc"]').val()) / 100;
+        
         $.each(this.items.products, function (pos, dict) {
             dict.pos = pos;
-            dict.subtotal = dict.cant * parseFloat(dict.pvp) * (1 - (discount / 100));
+            dict.subtotal = dict.cant * parseFloat(dict.pvp);
             subtotal += dict.subtotal;
         });
         this.items.subtotal = subtotal;
         this.items.iva = this.items.subtotal * iva;
-        this.items.total = this.items.subtotal + this.items.iva;
+        var totalWithIva = this.items.subtotal + this.items.iva;
+        this.items.desc = totalWithIva * desc;
+        this.items.total = totalWithIva - this.items.desc;
 
         $('input[name="subtotal"]').val(this.items.subtotal.toFixed(2));
+        $('input[name="discount"]').val(this.items.desc.toFixed(2));
         $('input[name="ivacalc"]').val(this.items.iva.toFixed(2));
         $('input[name="total"]').val(this.items.total.toFixed(2));
+
+        this.update_pagado();
+    },
+    update_pagado: function () {
+        this.items.pagado = this.items.cash + this.items.card;
+        $('input[name="pagado"]').val(this.items.pagado.toFixed(2));
     },
     add: function (item) {
         this.items.products.push(item);
@@ -154,11 +167,10 @@ $(function () {
         language: 'es'
     });
 
-    $('#date_joined').datetimepicker({
-        format: 'YYYY-MM-DD HH:mm:ss',  // Ajusta el formato de fecha y hora según tus necesidades
-        date: moment().format("YYYY-MM-DD HH:mm:ss"),
+    $('#date_cash').datetimepicker({
+        format: 'YYYY-MM-DD',
+        date: moment().format("YYYY-MM-DD"),
         locale: 'es',
-        //minDate: moment().format("YYYY-MM-DD")
     });
 
     $("input[name='iva']").TouchSpin({
@@ -173,10 +185,10 @@ $(function () {
         vents.calculate_invoice();
     }).val(0.21);
 
-    $("input[name='discount']").TouchSpin({
+    $("input[name='desc']").TouchSpin({
         min: 0,
         max: 100,
-        step: 5,
+        step: 0.1,
         decimals: 2,
         boostat: 5,
         maxboostedstep: 10,
@@ -185,52 +197,14 @@ $(function () {
         vents.calculate_invoice();
     }).val(0.00);
 
-    // // search clients
-
-    $('select[name="cli"]').select2({
-        theme: "bootstrap4",
-        language: 'es',
-        allowClear: true,
-        ajax: {
-            delay: 250,
-            type: 'POST',
-            url: window.location.pathname,
-            data: function (params) {
-                var queryParameters = {
-                    term: params.term,
-                    action: 'search_clients'
-                }
-                return queryParameters;
-            },
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            },
-        },
-        placeholder: 'Ingrese una descripción',
-        minimumInputLength: 1,
+    $('input[name="cash"]').on('change', function () {
+        vents.items.cash = parseFloat($(this).val()) || 0.00;
+        vents.update_pagado();
     });
 
-    $('.btnAddClient').on('click', function () {
-        $('#myModalClient').modal('show');
-    });
-
-    $('#myModalClient').on('hidden.bs.modal', function (e) {
-        $('#frmClient').trigger('reset');
-    })
-
-    $('#frmClient').on('submit', function (e) {
-        e.preventDefault();
-        var parameters = new FormData(this);
-        parameters.append('action', 'create_client');
-        submit_with_ajax(window.location.pathname, 'Notificación',
-            '¿Estas seguro de crear al siguiente cliente?', parameters, function (response) {
-                //console.log(response);
-                var newOption = new Option(response.full_name, response.id, false, true);
-                $('select[name="cli"]').append(newOption).trigger('change');
-                $('#myModalClient').modal('hide');
-            });
+    $('input[name="card"]').on('change', function () {
+        vents.items.card = parseFloat($(this).val()) || 0.00;
+        vents.update_pagado();
     });
 
     $('.btnRemoveAll').on('click', function () {
@@ -347,12 +321,21 @@ $(function () {
         e.preventDefault();
 
         if (vents.items.products.length === 0) {
-            message_error('Debe al menos tener un item en su detalle transacción');
+            message_error('Debe al menos tener un item en su detalle de venta');
             return false;
         }
 
-        vents.items.date_joined = $('input[name="date_joined"]').val() + ':00';
+        vents.items.date_cash = $('input[name="date_cash"]').val();
         vents.items.tipo_pago = $('select[name="tipo_pago"]').val();
+        vents.items.cash = parseFloat($('input[name="cash"]').val()) || 0.00;
+        vents.items.card = parseFloat($('input[name="card"]').val()) || 0.00;
+
+        // if (vents.items.cash + vents.items.card !== vents.items.total) {
+        if ((vents.items.cash + vents.items.card).toFixed(2) !== vents.items.total.toFixed(2)) {
+            message_error('La suma de efectivo y tarjeta debe ser igual al total de la factura');
+            return false;
+        }
+        
         var parameters = new FormData();
         parameters.append('action', $('input[name="action"]').val());
         parameters.append('vents', JSON.stringify(vents.items));
@@ -403,8 +386,6 @@ $(function () {
         $(this).val('').trigger('change.select2');
     });
 
-    // Esto se puso aqui para que funcione bien el editar y calcule bien los valores del iva. // sino tomaría el valor del iva de la base debe
-    // coger el que pusimos al inicializarlo.
     vents.list();
 });
 

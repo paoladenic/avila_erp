@@ -1,32 +1,31 @@
-import json
 import os
+import json
+import pytz
+from django.utils import timezone
+from datetime import datetime
+
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponse
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, ListView, DeleteView, UpdateView, View
 
-# from core.erp.forms import SaleForm, ClientForm
 from core.erp.mixins import ValidatePermissionRequiredMixin
 from core.erp.models import *
 from core.erp.forms import TicketForm
-from core.erp.models import Ticket, DetTicket
 from django.shortcuts import render
 from xhtml2pdf import pisa
 
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from io import BytesIO
 from django.http import Http404
 from django.utils.timezone import make_aware
-import datetime
 
 
 
@@ -46,7 +45,7 @@ class TicketListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListVi
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for i in Ticket.objects.all()[0:15]:
+                for i in Ticket.objects.all():
                     data.append(i.toJSON())
             elif action == 'search_details_prod':
                 data = []
@@ -60,7 +59,7 @@ class TicketListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListVi
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Listado de 15 Ultimos Tickets'
+        context['title'] = 'Listado de Tickets'
         context['create_url'] = reverse_lazy('erp:ticket_create')
         context['list_url'] = reverse_lazy('erp:ticket_list')
         context['entity'] = 'Tickets'
@@ -87,14 +86,10 @@ class TicketCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Crea
                 data = []
                 ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term'].strip()
-                # products = Product.objects.filter(stock__gt=0)
-                # if len(term):
-                #     products = products.filter(name__icontains=term, sku__icontains=term)
                 products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
-                for i in products.exclude(id__in=ids_exclude)[0:10]:
+                for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['value'] = i.name
-                    # item['text'] = i.name
                     data.append(item)
             elif action == 'search_autocomplete':
                 data = []
@@ -103,7 +98,7 @@ class TicketCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Crea
                 data.append({'id': term, 'text': term})
                 # products = Product.objects.filter(name__icontains=term, sku__icontains=term, stock__gt=0)
                 products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
-                for i in products.exclude(id__in=ids_exclude)[0:10]:
+                for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['text'] = i.name
                     data.append(item)
@@ -111,26 +106,47 @@ class TicketCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Crea
                 with transaction.atomic():
                     vents = json.loads(request.POST['vents'])
                     ticket = Ticket()
-                    print(timezone.get_current_timezone())
-                    print(timezone.now())
-                    print(datetime.datetime.now())
-                    print(vents['date_joined'])
-                    # ticket.date_joined = make_aware(vents['date_joined'], timezone=timezone.get_current_timezone())
-                    ticket.date_joined = vents['date_joined']
+            
+                    local_timezone = pytz.timezone('Europe/Madrid')
+                    now = timezone.localtime(timezone.now(), local_timezone)
+                    ticket.date_joined = now
+                    ticket.date_cash = now.date()
+
+                    # ticket.date_joined = timezone.now()
+                    # ticket.date_cash = timezone.now().date()
+
+                    print("Current Timezone:", timezone.get_current_timezone())
+                    print("Current Time (Django):", timezone.now())
+                    print("Local Timezone:", local_timezone)
+                    print("Local Time (converted):", now)
+                    print("Ticket Date Joined (pre-save):", ticket.date_joined)
+
+                    if not vents['tipo_pago']:
+                        raise ValueError("Debe seleccionar un tipo de pago.")
+
                     tipo_pago_id = int(vents['tipo_pago'])
                     tipo_pago_instance = TipoPago.objects.get(pk=tipo_pago_id)
                     ticket.tipo_pago = tipo_pago_instance
-                    ticket.subtotal = float(vents['subtotal'])
-                    ticket.iva = float(vents['iva'])
-                    ticket.total = float(vents['total'])
+                    ticket.subtotal = round(float(vents['subtotal']), 2)
+                    ticket.iva = round(float(vents['iva']), 2)
+                    ticket.desc = round(float(vents['desc']), 2)
+                    ticket.total = round(float(vents['total']), 2)
+                    ticket.cash = round(float(vents['cash']), 2)
+                    ticket.card = round(float(vents['card']), 2)
+                    if ticket.cash + ticket.card != ticket.total:
+                        raise ValueError("La suma de efectivo y tarjeta debe ser igual al total.")
                     ticket.save()
+                    stored_ticket = Ticket.objects.get(pk=ticket.pk)
+                    print("Stored Date Joined:", stored_ticket.date_joined)
+                    print("Stored Date Cash:", stored_ticket.date_cash)
+
                     for i in vents['products']:
                         det = DetTicket()
                         det.ticket_id = ticket.id
                         det.prod_id = i['id']
                         det.cant = int(i['cant'])
-                        det.price = float(i['pvp'])
-                        det.subtotal = float(i['subtotal'])
+                        det.price = round(float(i['pvp']), 2)
+                        det.subtotal = round(float(i['subtotal']), 2)
                         det.save()
                         det.prod.stock -= det.cant
                         det.prod.save()
@@ -146,7 +162,6 @@ class TicketCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Crea
         context['list_url'] = self.success_url
         context['action'] = 'add'
         context['det'] = []
-        # context['frmClient'] = ClientForm()
         return context
 
 
@@ -165,7 +180,6 @@ class TicketUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Upda
     def get_form(self, form_class=None):
         instance = self.get_object()
         form = TicketForm(instance=instance)
-        form.fields['cli'].queryset = Client.objects.filter(id=instance.cli.id)
         return form
 
     def post(self, request, *args, **kwargs):
@@ -176,11 +190,8 @@ class TicketUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Upda
                 data = []
                 ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term'].strip()
-                # products = Product.objects.filter(stock__gt=0)
-                # if len(term):
-                #     products = products.filter(name__icontains=term, sku__icontains=term)
                 products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
-                for i in products.exclude(id__in=ids_exclude)[0:10]:
+                for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['value'] = i.name
                     # item['text'] = i.name
@@ -192,7 +203,7 @@ class TicketUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Upda
                 data.append({'id': term, 'text': term})
                 # products = Product.objects.filter(name__icontains=term, sku__icontains=term, stock__gt=0)
                 products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
-                for i in products.exclude(id__in=ids_exclude)[0:10]:
+                for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['text'] = i.name
                     data.append(item)
@@ -201,13 +212,22 @@ class TicketUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Upda
                     vents = json.loads(request.POST['vents'])
                     # sale = Sale.objects.get(pk=self.get_object().id)
                     ticket = self.get_object()
-                    ticket.date_joined = vents['date_joined']
+                    local_timezone = pytz.timezone('Europe/Madrid')
+                    ticket.date_joined = timezone.localtime(timezone.now(), local_timezone)
+                    ticket.date_cash = timezone.localtime(timezone.now(), local_timezone).date()
+
+                    # ticket.date_cash = vents['date_cash']
                     tipo_pago_id = int(vents['tipo_pago'])
                     tipo_pago_instance = TipoPago.objects.get(pk=tipo_pago_id)
                     ticket.tipo_pago = tipo_pago_instance
-                    ticket.subtotal = float(vents['subtotal'])
-                    ticket.iva = float(vents['iva'])
-                    ticket.total = float(vents['total'])
+                    ticket.subtotal = round(float(vents['subtotal']), 2)
+                    ticket.iva = round(float(vents['iva']), 2)
+                    ticket.desc = round(float(vents['desc']), 2)
+                    ticket.total = round(float(vents['total']), 2)
+                    ticket.cash = round(float(vents['cash']), 2)
+                    ticket.card = round(float(vents['card']), 2)
+                    if ticket.cash + ticket.card != ticket.total:
+                        raise ValueError("La suma de efectivo y tarjeta debe ser igual al total.")
                     ticket.save()
                     ticket.detticket_set.all().delete()
                     for i in vents['products']:
@@ -215,8 +235,8 @@ class TicketUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Upda
                         det.ticket_id = ticket.id
                         det.prod_id = i['id']
                         det.cant = int(i['cant'])
-                        det.price = float(i['pvp'])
-                        det.subtotal = float(i['subtotal'])
+                        det.price = round(float(i['pvp']), 2)
+                        det.subtotal = round(float(i['subtotal']), 2)
                         det.save()
                         det.prod.stock -= det.cant
                         det.prod.save()
@@ -244,7 +264,6 @@ class TicketUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Upda
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         context['det'] = json.dumps(self.get_details_product())
-        # context['frmClient'] = ClientForm()
         return context
 
 
@@ -287,14 +306,6 @@ class TicketInvoicePdfView(LoginRequiredMixin, View):
             }
             html = template.render(context)
             response = HttpResponse(content_type='application/pdf')
-            # response['Content-Disposition'] = 'attachment; filename="ticket.pdf"'
-
-            # buffer = BytesIO()
-            # pisaStatus = pisa.CreatePDF(html, dest=buffer)
-            # pdf = buffer.getvalue()
-            # buffer.close()
-            # response.write(pdf)
-
             pisaStatus = pisa.CreatePDF(
                 html, dest=response)
             return response

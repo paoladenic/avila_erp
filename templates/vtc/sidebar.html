@@ -1,8 +1,8 @@
 {% load static %}
-<aside class="main-sidebar sidebar-light-primary elevation-4">
+<aside class="main-sidebar sidebar-light-secondary elevation-4">
     <a href="{% url 'erp:dashboard' %}" class="brand-link">
         <img src="{% static 'img/avila.png' %}"
-             alt="AdminLTE Logo"
+             alt="Avila Logo"
              class="brand-image img-circle elevation-3"
              style="opacity: .8">
         <span class="brand-text font-weight-light">Avila Bikes</span>
@@ -19,85 +19,185 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-header">Opciones</li>
-                <li class="nav-item">
+                <li class="nav-item has-treeview">
                     <a href="{% url 'erp:cash_flow' %}" class="nav-link">
                         <i class="nav-icon fas fa-credit-card"></i>
                         <p>
-                            Cash flow
+                            Cash Flow
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'erp:cash_open' %}" class="nav-link">
+                                <i class="fas fa-lock-open nav-icon"></i>
+                                <p>Abrir Día</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:gasto_list' %}" class="nav-link">
+                                <i class="fas fa-minus-square nav-icon"></i>
+                                <p>Gastos</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:balance_dia' %}" class="nav-link">
+                                <i class="fas fa-chart-bar nav-icon"></i>
+                                <p>Status Día</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:cash_close' %}" class="nav-link">
+                                <i class="fas fa-lock nav-icon"></i>
+                                <p>Cerrar Día</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="{% url 'erp:ticket_create' %}" class="nav-link">
-                        <i class="nav-icon fas fa-receipt"></i>
-                        <p>
-                            Ticket
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'erp:trabajo_list' %}" class="nav-link">
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-bicycle"></i>
                         <p>
                             Taller
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'erp:trabajo_list2' %}" class="nav-link">
+                                <i class="fas fa-receipt nav-icon"></i>
+                                <p>NUEVO Listado de Trabajos</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:trabajo_create2' %}" class="nav-link">
+                                <i class="fas fa-file-signature nav-icon"></i>
+                                <p>Nuevo Trabajo</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:clientetrabajo_list' %}" class="nav-link">
+                                <i class="fas fa-users nav-icon"></i>
+                                <p>Cliente (Taller)</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:trabajo_list' %}" class="nav-link">
+                                <i class="fas fa-receipt nav-icon"></i>
+                                <p>Lista Trabajos (Antiguo)</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="{% url 'erp:sale_list' %}" class="nav-link">
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-receipt"></i>
+                        <p>
+                            Tickets
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'erp:ticket_create' %}" class="nav-link">
+                                <i class="fas fa-file-signature nav-icon"></i>
+                                <p>Nuevo Ticket</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:ticket_list' %}" class="nav-link">
+                                <i class="fas fa-receipt nav-icon"></i>
+                                <p>Listado de Tickets</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-file"></i>
                         <p>
                             Facturas
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'erp:sale_create' %}" class="nav-link">
+                                <i class="fas fa-file-signature nav-icon"></i>
+                                <p>Nueva Factura</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:sale_list' %}" class="nav-link">
+                                <i class="fas fa-file-alt nav-icon"></i>
+                                <p>Listado de Facturas</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:client_list' %}" class="nav-link">
+                                <i class="fas fa-users nav-icon"></i>
+                                <p>Cliente (Factura)</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="{% url 'erp:client_list' %}" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>
-                            Clientes
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'erp:gasto_list' %}" class="nav-link">
-                        <i class="nav-icon fas fa-folder-minus"></i>
-                        <p>
-                            Gastos
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'sale_report' %}" class="nav-link">
-                        <i class="nav-icon fas fa-chart-bar"></i>
-                        <p>
-                            Reporte de Facturas
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'ticket_report' %}" class="nav-link">
-                        <i class="nav-icon fas fa-chart-line"></i>
-                        <p>
-                            Reporte de Tickets
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'erp:product_list' %}" class="nav-link">
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-box"></i>
                         <p>
                             Productos
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'erp:product_create' %}" class="nav-link">
+                                <i class="fas fa-box-open nav-icon"></i>
+                                <p>Nuevo Producto</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:product_list' %}" class="nav-link">
+                                <i class="fas fa-box nav-icon"></i>
+                                <p>Listado de Productos</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:category_list' %}" class="nav-link">
+                                <i class="fas fa-boxes nav-icon"></i>
+                                <p>Categorías</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="{% url 'erp:category_list' %}" class="nav-link">
-                        <i class="nav-icon fas fa-boxes"></i>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-bar"></i>
                         <p>
-                            Categorías
+                            Reportes
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'sale_report' %}" class="nav-link">
+                                <i class="fas fa-file-contract nav-icon"></i>
+                                <p>Reporte de Factura</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'ticket_report' %}" class="nav-link">
+                                <i class="fas fa-file-contract nav-icon"></i>
+                                <p>Reporte de Ticket</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'erp:cash_report' %}" class="nav-link">
+                                <i class="fas fa-file-contract nav-icon"></i>
+                                <p>Reporte de Cierre</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                     <a href="{% url 'user:user_list' %}" class="nav-link">

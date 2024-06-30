@@ -2,6 +2,7 @@ from datetime import datetime
 from django import forms
 from django.forms import *
 from django.forms import ModelForm
+from django.utils import timezone
 from core.erp.models import *
 
 
@@ -17,13 +18,14 @@ class CategoryForm(ModelForm):
             'name': TextInput(
                 attrs={
                     'placeholder': 'Ingrese un nombre',
+                    'class': 'form-control',
                 }
             ),
             'desc': Textarea(
                 attrs={
                     'placeholder': 'Ingrese una descripción',
-                    'rows': 3,
-                    'cols': 3
+                    'rows': 2,
+                    'cols': 2
                 }
             ),
         }
@@ -53,6 +55,7 @@ class ProductForm(ModelForm):
             'name': TextInput(
                 attrs={
                     'placeholder': 'Ingrese un nombre',
+                    'class': 'form-control',
                 }
             ),
             'cat': Select(
@@ -88,31 +91,37 @@ class ClientForm(ModelForm):
             'names': TextInput(
                 attrs={
                     'placeholder': 'Ingrese los nombres',
+                    'class': 'form-control',
                 }
             ),
             'surnames': TextInput(
                 attrs={
                     'placeholder': 'Ingrese los apellidos',
+                    'class': 'form-control',
                 }
             ),
             'dni': TextInput(
                 attrs={
                     'placeholder': 'Ingrese el dni',
+                    'class': 'form-control',
                 }
             ),
             'address': TextInput(
                 attrs={
                     'placeholder': 'Ingrese la dirección',
+                    'class': 'form-control',
                 }
             ),
             'phone': TextInput(
                 attrs={
                     'placeholder': 'Ingrese el telefono',
+                    'class': 'form-control',
                 }
             ),
             'email': TextInput(
                 attrs={
                     'placeholder': 'Ingrese el email',
+                    'class': 'form-control',
                 }
             ),
         }
@@ -131,8 +140,6 @@ class ClientForm(ModelForm):
         return data
 
 
-
-
 class SaleForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -144,7 +151,6 @@ class SaleForm(ModelForm):
         widgets = {
             'cli': Select(attrs={
                 'class': 'custom-select select2',
-                # 'style': 'width: 100%'
             }),
             'date_joined': DateInput(
                 format='%Y-%m-%d',
@@ -163,6 +169,9 @@ class SaleForm(ModelForm):
             'iva': TextInput(attrs={
                 'class': 'form-control',
             }),
+            'desc': TextInput(attrs={
+                'class': 'form-control',
+            }),
             'subtotal': TextInput(attrs={
                 'readonly': True,
                 'class': 'form-control',
@@ -170,23 +179,28 @@ class SaleForm(ModelForm):
             'total': TextInput(attrs={
                 'readonly': True,
                 'class': 'form-control',
+            }),
+            'cash': TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'card': TextInput(attrs={
+                'class': 'form-control',
             })
         }
-
 
 class TicketForm(ModelForm):
     class Meta:
         model = Ticket
         fields = '__all__'
         widgets = {
-            'date_joined': DateTimeInput(
-                format='%Y-%m-%d %H:%M:%S',
+            'date_cash': DateInput(
+                format='%Y-%m-%d',
                 attrs={
-                    'value': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'value': datetime.now().strftime('%Y-%m-%d'),
                     'autocomplete': 'off',
                     'class': 'form-control datetimepicker-input',
-                    'id': 'date_joined',
-                    'data-target': '#date_joined',
+                    'id': 'date_cash',
+                    'data-target': '#date_cash',
                     'data-toggle': 'datetimepicker'
                 }
             ),
@@ -196,12 +210,21 @@ class TicketForm(ModelForm):
             'iva': TextInput(attrs={
                 'class': 'form-control',
             }),
+            'desc': TextInput(attrs={
+                'class': 'form-control',
+            }),
             'subtotal': TextInput(attrs={
                 'readonly': True,
                 'class': 'form-control',
             }),
             'total': TextInput(attrs={
                 'readonly': True,
+                'class': 'form-control',
+            }),
+            'cash': TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'card': TextInput(attrs={
                 'class': 'form-control',
             })
         }
@@ -275,7 +298,6 @@ class ReportForm(Form):
     }))
 
 
-
 class TrabajoForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -330,12 +352,126 @@ class TrabajoForm(ModelForm):
                 attrs={
                     'placeholder': 'Detalle del trabajo',
                     'rows': 3,
-                    'cols': 3
+                    'cols': 2
                 }
             ),
             'status': Select(attrs={
                 'class': 'custom-select select2',
             }),
+        }
+
+    def save(self, commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                instance = form.save()
+                data = instance.toJSON()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
+    
+    
+class TrabajoForm2(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['cliente'].queryset = ClienteTrabajo.objects.all()
+
+    class Meta:
+        model = Trabajo2
+        fields = '__all__'
+        widgets = {
+            'numero': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese el Número de Orden',
+                    'class': 'form-control',
+                }
+            ),
+            'status': Select(
+                attrs={
+                    'class': 'custom-select select2',
+                }
+            ),
+            'fecha_trabajo': DateInput(
+                format='%Y-%m-%d',
+                attrs={
+                    'value': datetime.now().strftime('%Y-%m-%d'),
+                    'autocomplete': 'off',
+                    'class': 'form-control datetimepicker-input',
+                    'id': 'fecha_trabajo',
+                    'data-target': '#fecha_trabajo',
+                    'data-toggle': 'datetimepicker'
+                }
+            ),
+            'cliente': Select(
+                attrs={
+                    'class': 'custom-select select2',
+                }
+            ),
+            'detalle': Textarea(
+                attrs={
+                    'placeholder': 'Detalle del trabajo',
+                    'class': 'form-control',
+                    'rows': 6,
+                    'cols': 2
+                }
+            ),
+            'presupuesto': TextInput(
+                attrs={
+                    'placeholder': 'A Pagar',
+                    'class': 'form-control',
+                }
+            ),
+        }
+
+    def save(self, commit=True):
+        data = {}
+        form = super()
+        try:
+            if form.is_valid():
+                instance = form.save()
+                data = instance.toJSON()
+            else:
+                data['error'] = form.errors
+        except Exception as e:
+            data['error'] = str(e)
+        return data
+    
+class ClienteTrabajoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['names'].widget.attrs['autofocus'] = True
+
+    class Meta:
+        model = ClienteTrabajo
+        fields = '__all__'
+        widgets = {
+            'names': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese el nombre',
+                    'class': 'form-control',
+                }
+            ),
+            'surnames': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese los apellidos',
+                    'class': 'form-control',
+                }
+            ),
+            'phone': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese el telefono',
+                    'class': 'form-control',
+                }
+            ),
+            'vehiculo': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese el vehículo',
+                    'class': 'form-control',
+                }
+            ),
         }
 
     def save(self, commit=True):

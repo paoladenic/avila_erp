@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<style>
+    @page { size: 226pt 800pt; }
+    
+    body {
+        margin: 2px;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .img-invoice {
+        width: 100px;
+        text-align: center;
+        margin: 0px auto;
+        margin-top: 5px;
+        display: block;
+    }
+    
+    .header {
+        text-align: center;
+        font-size: 9px;
+        margin-bottom: 3px;
+    }
+
+    .centered-paragraph {
+        text-align: center;
+        font-size: 9px;
+        margin-top: 5px;
+    }
+
+    .info-table th {
+        width: 100%;
+        font-size: 10px;
+        margin-top: 5px;
+    }
+
+    .info-table td {
+        width: 100%;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .info-table th,
+    .info-table td {
+        padding: 2px;
+        border-bottom: 1px solid #ddd;
+    }
+</style>
+<body>
+    <img src="static/img/logo-ticket.png" class="img-invoice">
+    {% comment %} <img src="/home/avilabikes/avila_erp/static/img/logo-ticket.png" class="img-invoice"> {% endcomment %}
+    <div class="header">
+        {{ comp.phone }}<br>
+        {{ comp.address }}<br>
+        {{ comp.email }}<br>
+        {{ comp.web }}<br>
+    </div>
+    <p class="centered-paragraph">
+        <b>ES OBLIGATORIO PRESENTAR EL TICKET PARA LA ENTREGA DEL VEHÍCULO</b>
+    </p>
+
+    <table class="info-table">
+        <tr>
+            <th style="font-size: 10px;"># ORDEN DE SERVICIO: </th>
+            <td style="font-size: 18px;">{{ trabajo.numero }}</td>
+        </tr>
+    </table>
+
+    <table class="info-table">
+        <tr>
+            <th>FECHA DE RECEPCIÓN:</th>
+            <td>{{ trabajo.fecha_trabajo }}</td>
+        </tr>
+        <tr>
+            <th>CLIENTE:</th>
+            <td>{{ trabajo.cliente }}</td>
+        </tr>
+    </table>
+
+    <table class="info-table">
+        <tr>
+            <th>DETALLE DE SERVICIO: </th>
+            <td>{{ trabajo.detalle }}</td>
+        </tr>
+    </table>
+    
+    <p class="centered-paragraph" style="font-size: 8px; margin-bottom: 30px;">
+        <b>Los vehículos deben ser recogidos en tienda en un máximo de 48h. tras la recepción del mensaje de confirmación.</b><br>
+        <b>DECLARACIÓN DEL CLIENTE</b><br>
+        <b>Declaro que he revisado mi vehículo antes de su entrega a Ávila Bikes.</b><br>
+        <b>Confirmo que no hay problemas adicionales aparte de los detallados en la hoja de trabajo.</b><br>
+        <b>Acepto que cualquier otro problema no registrado no es responsabilidad del taller.</b><br>
+        <b>FIRMA DEL CLIENTE:</b><br>
+        <br>
+    </p>
+    <p style="font-size: 8px; margin-left: 8px; margin-bottom: 40px;">
+        <b>OBSERVACIONES:</b><br>
+    </p>
+</body>
+</html>

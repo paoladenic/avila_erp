@@ -36,7 +36,7 @@ class SaleListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for i in Sale.objects.all()[0:15]:
+                for i in Sale.objects.all():
                     data.append(i.toJSON())
             elif action == 'search_details_prod':
                 data = []
@@ -50,7 +50,7 @@ class SaleListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Listado de 15 Ultimas Facturas'
+        context['title'] = 'Listado de Facturas'
         context['create_url'] = reverse_lazy('erp:sale_create')
         context['list_url'] = reverse_lazy('erp:sale_list')
         context['entity'] = 'Ventas'
@@ -77,14 +77,10 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
                 data = []
                 ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term'].strip()
-                # products = Product.objects.filter(stock__gt=0)
-                # if len(term):
-                #     products = products.filter(name__icontains=term, sku__icontains=term)
                 products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
-                for i in products.exclude(id__in=ids_exclude)[0:10]:
+                for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['value'] = i.name
-                    # item['text'] = i.name
                     data.append(item)
             elif action == 'search_autocomplete':
                 data = []
@@ -93,7 +89,7 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
                 data.append({'id': term, 'text': term})
                 # products = Product.objects.filter(name__icontains=term, sku__icontains=term, stock__gt=0)
                 products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
-                for i in products.exclude(id__in=ids_exclude)[0:10]:
+                for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['text'] = i.name
                     data.append(item)
@@ -103,20 +99,27 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
                     sale = Sale()
                     sale.date_joined = vents['date_joined']
                     sale.cli_id = vents['cli']
+                    if not vents['tipo_pago']:
+                        raise ValueError("Debe seleccionar un tipo de pago.")
                     tipo_pago_id = int(vents['tipo_pago'])
                     tipo_pago_instance = TipoPago.objects.get(pk=tipo_pago_id)
                     sale.tipo_pago = tipo_pago_instance
-                    sale.subtotal = float(vents['subtotal'])
-                    sale.iva = float(vents['iva'])
-                    sale.total = float(vents['total'])
+                    sale.subtotal = round(float(vents['subtotal']), 2)
+                    sale.iva = round(float(vents['iva']), 2)
+                    sale.desc = round(float(vents['desc']), 2)
+                    sale.total = round(float(vents['total']), 2)
+                    sale.cash = round(float(vents['cash']), 2)
+                    sale.card = round(float(vents['card']), 2)
+                    if sale.cash + sale.card != sale.total:
+                        raise ValueError("La suma de efectivo y tarjeta debe ser igual al total.")
                     sale.save()
                     for i in vents['products']:
                         det = DetSale()
                         det.sale_id = sale.id
                         det.prod_id = i['id']
                         det.cant = int(i['cant'])
-                        det.price = float(i['pvp'])
-                        det.subtotal = float(i['subtotal'])
+                        det.price = round(float(i['pvp']), 2)
+                        det.subtotal = round(float(i['subtotal']), 2)
                         det.save()
                         det.prod.stock -= det.cant
                         det.prod.save()
@@ -177,11 +180,8 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
                 data = []
                 ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term'].strip()
-                # products = Product.objects.filter(stock__gt=0)
-                # if len(term):
-                #     products = products.filter(name__icontains=term, sku__icontains=term)
                 products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
-                for i in products.exclude(id__in=ids_exclude)[0:10]:
+                for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['value'] = i.name
                     # item['text'] = i.name
@@ -193,7 +193,7 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
                 data.append({'id': term, 'text': term})
                 # products = Product.objects.filter(name__icontains=term, sku__icontains=term, stock__gt=0)
                 products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
-                for i in products.exclude(id__in=ids_exclude)[0:10]:
+                for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['text'] = i.name
                     data.append(item)
@@ -207,9 +207,14 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
                     tipo_pago_id = int(vents['tipo_pago'])
                     tipo_pago_instance = TipoPago.objects.get(pk=tipo_pago_id)
                     sale.tipo_pago = tipo_pago_instance
-                    sale.subtotal = float(vents['subtotal'])
-                    sale.iva = float(vents['iva'])
-                    sale.total = float(vents['total'])
+                    sale.subtotal = round(float(vents['subtotal']), 2)
+                    sale.iva = round(float(vents['iva']), 2)
+                    sale.desc = round(float(vents['desc']), 2)
+                    sale.total = round(float(vents['total']), 2)
+                    sale.cash = round(float(vents['cash']), 2)
+                    sale.card = round(float(vents['card']), 2)
+                    if sale.cash + sale.card != sale.total:
+                        raise ValueError("La suma de efectivo y tarjeta debe ser igual al total.")
                     sale.save()
                     sale.detsale_set.all().delete()
                     for i in vents['products']:
@@ -217,8 +222,8 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
                         det.sale_id = sale.id
                         det.prod_id = i['id']
                         det.cant = int(i['cant'])
-                        det.price = float(i['pvp'])
-                        det.subtotal = float(i['subtotal'])
+                        det.price = round(float(i['pvp']), 2)
+                        det.subtotal = round(float(i['subtotal']), 2)
                         det.save()
                         det.prod.stock -= det.cant
                         det.prod.save()
@@ -305,7 +310,6 @@ class SaleInvoicePdfView(LoginRequiredMixin, View):
             print("URL de la imagen:", context['icon'])
             html = template.render(context)
             response = HttpResponse(content_type='application/pdf')
-            # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
             pisaStatus = pisa.CreatePDF(
                 html, dest=response)
             return response

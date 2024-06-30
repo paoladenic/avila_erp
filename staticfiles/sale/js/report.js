@@ -142,7 +142,7 @@ var report = {
                         if (!isNaN(numericValue)) {
                             return '€' + numericValue.toFixed(2);
                         } else {
-                            return ''; // o cualquier valor predeterminado si no es numérico
+                            return '';
                         }
                     }
                 },
@@ -160,10 +160,8 @@ var report = {
 
             },
             initComplete: function (settings, json) {
-                // Inicializar totalSum a 0 cada vez que se completa la tabla
                 totalSum = 0;
                 
-                // Iterar sobre los datos en la tabla y sumar los valores de la columna "Total"
                 tblReport.rows().every(function () {
                     var data = this.data();
                     var numericValue = parseFloat(data.total);
@@ -175,7 +173,7 @@ var report = {
                 // Añadir la fila de total al final de la tabla
                 if (tblReport.rows().count() > 0) {
                     var row = tblReport.row.add({
-                        id: '',  // Puedes asignar un valor especial para la fila total si es necesario
+                        id: '',  
                         cli: {
                             names: 'Total',
                             surnames: "Facturas"
@@ -186,9 +184,8 @@ var report = {
                         total: totalSum,
                     }).draw().node();
 
-                    // Aplicar formato a la fila total si es necesario
-                    $(row).addClass('text-bold');  // Agrega una clase para resaltar la fila total
-                    // ... resto del código ...
+                    // Aplicar formato a la fila total
+                    $(row).addClass('text-bold');
                 }  
             }
         });

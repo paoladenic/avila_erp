@@ -6,15 +6,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
-# DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = ["avilabikes.es", "www.avilabikes.es"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -67,6 +65,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 DATABASES = db.SQLITE
+# DATABASES = db.MYSQL
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -85,8 +84,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
+TIME_ZONE = 'Europe/Madrid'
 USE_TZ = True
-TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'es-ec'
 USE_I18N = True
 USE_L10N = True

@@ -41,10 +41,8 @@
     }
 </style>
 <body>
-{% comment %} <img src="http://localhost:8000{{ icon }}" class="img-invoice">
-<img src="{{ icon }}" class="img-invoice"> {% endcomment %}
-{% comment %} <img src="static/img/avila.png" class="img-invoice"> {% endcomment %}
 <img src="static/img/avila-redes.jpg" class="img-invoice">
+{% comment %} <img src="/home/avilabikes/avila_erp/static/img/avila-redes.jpg" class="img-invoice"> {% endcomment %}
 <p class="head">
     {{ comp.name1|upper }}<br>
     {{ comp.name2|upper }}<br>
@@ -77,25 +75,37 @@
             <td>{{ d.prod.cat.name }}</td>
             <td>{{ d.prod.name }}</td>
             <td class="text-center">{{ d.cant }}</td>
-            <td class="text-center">€{{ d.price }}</td>
-            <td style="text-align: right;">€{{ d.subtotal }}</td>
+            <td class="text-center">{{ d.price }}€</td>
+            <td style="text-align: right;">{{ d.subtotal }}€</td>
         </tr>
     {% endfor %}
+    <tr style="border-top: 1px solid black; padding-top: 4px;">
+        <td colspan="4"><b>SUBTOTAL</b></td>
+        <td style="text-align: right">{{ sale.subtotal }}€</td>
+    </tr>
+    <tr style="padding-top: 0px;">
+        <td colspan="4"><b>IVA 21%</b></td>
+        <td style="text-align: right">{{ sale.iva }}€</td>
+    </tr>
+    <tr style="padding-top: 0px;">
+        <td colspan="4"><b>DESCUENTO</b></td>
+        <td style="text-align: right">-{{ sale.desc }}€</td>
+    </tr>
+    <tr style="padding-top: 0px;">
+        <td colspan="4"><b>TOTAL A PAGAR</b></td>
+        <td style="text-align: right">{{ sale.total }}€</td>
+    </tr>
     <tr style="border-top: 1px solid black; padding-top: 4px;">
         <td colspan="4"><b>MÉTODO DE PAGO</b></td>
         <td style="text-align: right">{{ sale.tipo_pago.name }}</td>
     </tr>
-    <tr style="border-top: 1px solid black; padding-top: 4px;">
-        <td colspan="4"><b>SUBTOTAL</b></td>
-        <td style="text-align: right">€{{ sale.subtotal }}</td>
+    <tr style="padding-top: 0px;">
+        <td colspan="4"><b>EFECTIVO: </b></td>
+        <td style="text-align: right">{{ sale.cash }}€</td>
     </tr>
     <tr style="padding-top: 0px;">
-        <td colspan="4"><b>IVA 21%</b></td>
-        <td style="text-align: right">€{{ sale.iva }}</td>
-    </tr>
-    <tr style="padding-top: 0px;">
-        <td colspan="4"><b>TOTAL A PAGAR</b></td>
-        <td style="text-align: right">€{{ sale.total }}</td>
+        <td colspan="4"><b>TARJETA: </b></td>
+        <td style="text-align: right">{{ sale.card }}€</td>
     </tr>
     </tbody>
 </table>
@@ -104,10 +114,8 @@
 <br>
 <table style="margin-top: 550px;">
     <thead>
-    {% comment %} <tr>
-        <th>****GRACIAS POR SU COMPRA****</th>
-    </tr> {% endcomment %}
-    <img src="static/img/banner-fc.png" class="banner-invoice">
+        <img src="static/img/banner-fc.png" class="banner-invoice">
+        {% comment %} <img src="/home/avilabikes/avila_erp/static/img/banner-fc.png" class="banner-invoice"> {% endcomment %}
     </thead>
 </table>
 </body>

@@ -7,7 +7,11 @@ var vents = {
         tipo_pago: '',
         subtotal: 0.00,
         iva: 0.00,
+        desc: 0.00,
         total: 0.00,
+        cash: 0.00,
+        card: 0.00,
+        pagado: 0.00,
         products: []
     },
     get_ids: function () {
@@ -20,6 +24,8 @@ var vents = {
     calculate_invoice: function () {
         var subtotal = 0.00;
         var iva = $('input[name="iva"]').val();
+        var desc = parseFloat($('input[name="desc"]').val()) / 100;
+        
         $.each(this.items.products, function (pos, dict) {
             dict.pos = pos;
             dict.subtotal = dict.cant * parseFloat(dict.pvp);
@@ -27,11 +33,20 @@ var vents = {
         });
         this.items.subtotal = subtotal;
         this.items.iva = this.items.subtotal * iva;
-        this.items.total = this.items.subtotal + this.items.iva;
+        var totalWithIva = this.items.subtotal + this.items.iva;
+        this.items.desc = totalWithIva * desc;
+        this.items.total = totalWithIva - this.items.desc;
 
         $('input[name="subtotal"]').val(this.items.subtotal.toFixed(2));
+        $('input[name="discount"]').val(this.items.desc.toFixed(2));
         $('input[name="ivacalc"]').val(this.items.iva.toFixed(2));
         $('input[name="total"]').val(this.items.total.toFixed(2));
+
+        this.update_pagado();
+    },
+    update_pagado: function () {
+        this.items.pagado = this.items.cash + this.items.card;
+        $('input[name="pagado"]').val(this.items.pagado.toFixed(2));
     },
     add: function (item) {
         this.items.products.push(item);
@@ -157,7 +172,6 @@ $(function () {
         format: 'YYYY-MM-DD',
         date: moment().format("YYYY-MM-DD"),
         locale: 'es',
-        //minDate: moment().format("YYYY-MM-DD")
     });
 
     $("input[name='iva']").TouchSpin({
@@ -171,6 +185,38 @@ $(function () {
     }).on('change', function () {
         vents.calculate_invoice();
     }).val(0.21);
+
+    $("input[name='desc']").TouchSpin({
+        min: 0,
+        max: 100,
+        step: 0.1,
+        decimals: 2,
+        boostat: 5,
+        maxboostedstep: 10,
+        postfix: '%'
+    }).on('change', function () {
+        vents.calculate_invoice();
+    }).val(0.00);
+
+    $('input[name="cash"]').on('change', function () {
+        vents.items.cash = parseFloat($(this).val()) || 0.00;
+        vents.update_pagado();
+    });
+
+    $('input[name="card"]').on('change', function () {
+        vents.items.card = parseFloat($(this).val()) || 0.00;
+        vents.update_pagado();
+    });
+
+    $('.btnRemoveAll').on('click', function () {
+        if (vents.items.products.length === 0) return false;
+        alert_action('Notificación', '¿Estas seguro de eliminar todos los items de tu detalle?', function () {
+            vents.items.products = [];
+            vents.list();
+        }, function () {
+
+        });
+    });
 
     // search clients
 
@@ -220,15 +266,6 @@ $(function () {
             });
     });
 
-    $('.btnRemoveAll').on('click', function () {
-        if (vents.items.products.length === 0) return false;
-        alert_action('Notificación', '¿Estas seguro de eliminar todos los items de tu detalle?', function () {
-            vents.items.products = [];
-            vents.list();
-        }, function () {
-
-        });
-    });
 
     // event cant
     $('#tblProducts tbody')
@@ -341,6 +378,14 @@ $(function () {
         vents.items.date_joined = $('input[name="date_joined"]').val();
         vents.items.cli = $('select[name="cli"]').val();
         vents.items.tipo_pago = $('select[name="tipo_pago"]').val();
+        vents.items.cash = parseFloat($('input[name="cash"]').val()) || 0.00;
+        vents.items.card = parseFloat($('input[name="card"]').val()) || 0.00;
+
+        if ((vents.items.cash + vents.items.card).toFixed(2) !== vents.items.total.toFixed(2)) {
+            message_error('La suma de efectivo y tarjeta debe ser igual al total de la factura');
+            return false;
+        }
+        
         var parameters = new FormData();
         parameters.append('action', $('input[name="action"]').val());
         parameters.append('vents', JSON.stringify(vents.items));
@@ -391,8 +436,6 @@ $(function () {
         $(this).val('').trigger('change.select2');
     });
 
-    // Esto se puso aqui para que funcione bien el editar y calcule bien los valores del iva. // sino tomaría el valor del iva de la base debe
-    // coger el que pusimos al inicializarlo.
     vents.list();
 });
 

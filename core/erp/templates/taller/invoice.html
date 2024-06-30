@@ -3,8 +3,8 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <style>
-    @page { size: 226pt 410pt; }
-    
+    @page { size: 226pt 700pt; }
+
     body {
         margin: 2px;
         padding: 0;
@@ -18,7 +18,7 @@
         margin-top: 5px;
         display: block;
     }
-    
+
     .header {
         text-align: center;
         font-size: 9px;
@@ -31,9 +31,15 @@
         margin-top: 5px;
     }
 
-    .info-table {
+    .info-table th {
         width: 100%;
         font-size: 10px;
+        margin-top: 5px;
+    }
+
+    .info-table td {
+        width: 100%;
+        font-size: 13px;
         margin-top: 5px;
     }
 
@@ -45,6 +51,7 @@
 </style>
 <body>
     <img src="static/img/logo-ticket.png" class="img-invoice">
+    {% comment %} <img src="/home/avilabikes/avila_erp/static/img/logo-ticket.png" class="img-invoice"> {% endcomment %}
     <div class="header">
         {{ comp.phone }}<br>
         {{ comp.address }}<br>
@@ -58,7 +65,7 @@
     <table class="info-table">
         <tr>
             <th style="font-size: 10px;"># ORDEN DE SERVICIO: </th>
-            <td style="font-size: 18px;">{{ trabajo.numero }}</td>
+            <td style="font-size: 22px;">{{ trabajo.numero }}</td>
         </tr>
     </table>
 
@@ -91,7 +98,7 @@
             <td>{{ trabajo.detalle }}</td>
         </tr>
     </table>
-    
+
     <p class="centered-paragraph" style="font-size: 8px; margin-bottom: 30px;">
         <b>Los vehículos deben ser recogidos en tienda en un máximo de 48h. tras la recepción del mensaje de confirmación.</b><br>
         <b>DECLARACIÓN DEL CLIENTE</b><br>
@@ -101,7 +108,7 @@
         <b>FIRMA DEL CLIENTE:</b><br>
         <br>
     </p>
-    <p style="font-size: 8px; margin-left: 8px; margin-bottom: 30px;">
+    <p style="font-size: 8px; margin-left: 8px; margin-bottom: 100px;">
         <b>OBSERVACIONES:</b><br>
     </p>
 </body>

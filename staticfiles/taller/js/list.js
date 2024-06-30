@@ -20,17 +20,31 @@ $(function () {
             {"data": "telefono"},
             {"data": "vehiculo"},
             {"data": "detalle"},
+            {"data": "image"},
             {"data": "presupuesto"},
             {"data": "status"},
             {"data": "id"},
         ],
         columnDefs: [
             {
+                targets: [-4],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    var imageUrl = '<img src="' + data + '" class="img-thumbnail" style="cursor: pointer; width: 50px; height: 50px;" onclick="showImage(\'' + data + '\')">';
+                    return imageUrl;
+                }
+            },
+            {
                 targets: [-3],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    return '€' + parseFloat(data).toFixed(2);
+                    if (isNaN(parseFloat(data)) || data === '') {
+                        return 'N/A';
+                    } else {
+                        return '€' + parseFloat(data).toFixed(2);
+                    }
                 }
             },
             {
@@ -65,8 +79,10 @@ $(function () {
                 }
             },
         ],
+        order: [[10, 'desc']],
         initComplete: function (settings, json) {
 
         }
     });
 });
+

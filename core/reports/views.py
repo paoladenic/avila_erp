@@ -65,7 +65,7 @@ class ReportTicketView(FormView):
                 end_date = request.POST.get('end_date', '')
                 search = Ticket.objects.all()
                 if len(start_date) and len(end_date):
-                    search = search.filter(date_joined__range=[start_date, end_date])
+                    search = search.filter(date_cash__range=[start_date, end_date])
                 for i in search:
                     data.append(i.toJSON())
             else:
