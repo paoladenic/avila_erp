@@ -106,6 +106,7 @@ var report = {
                 {data: "id"},
                 {data: "cli.names"},
                 {data: "date_joined"},
+                {data: "tipo_pago"},
                 {data: "subtotal"},
                 {data: "iva"},
                 {data: "total"},
@@ -113,17 +114,10 @@ var report = {
             ],
             columnDefs: [
                 {
-                    targets: [-6],
+                    targets: [-7],
                     class: 'text-center',
                     render: function (data, type, row) {
                         return row.cli.names + ' ' + row.cli.surnames;
-                    }
-                },
-                {
-                    targets: [-5],
-                    class: 'text-center',
-                    render: function (data, type, row) {
-                        return data;
                     }
                 },
                 {
@@ -179,6 +173,7 @@ var report = {
                             surnames: "Facturas"
                         },
                         date_joined: '',
+                        tipo_pago: '',
                         subtotal: '',
                         iva: '',
                         total: totalSum,

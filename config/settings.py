@@ -12,7 +12,6 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = ["*"]
-# ALLOWED_HOSTS = ["avilabikes.es", "www.avilabikes.es"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -25,6 +24,8 @@ INSTALLED_APPS = [
     # Libs
     'widget_tweaks',
     'import_export',
+    'django_cleanup.apps.CleanupConfig',
+    'django_extensions',
     # Apps
     'core.erp',
     'core.login',

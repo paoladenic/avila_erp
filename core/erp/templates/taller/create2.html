@@ -22,10 +22,6 @@
                     <div class="card-body">
                         <input type="hidden" name="action" value="{{ action }}">
                         <div class="form-group">
-                            <label>Número:</label>
-                            {{ form.numero }}
-                        </div>
-                        <div class="form-group">
                             <label>Status:</label>
                             {{ form.status }}
                         </div>
@@ -49,13 +45,17 @@
                             {{ form.detalle }}
                         </div>
                         <div class="form-group">
+                            <label>Número:</label>
+                            {{ form.numero }}
+                        </div>
+                        {% comment %} <div class="form-group">
                             <label>Imagen:</label>
                             {{ form.image }}
-                        </div>
-                        <div class="form-group">
+                        </div> {% endcomment %}
+                        {% comment %} <div class="form-group">
                             <label>Presupuesto:</label>
                             {{ form.presupuesto }}
-                        </div>
+                        </div> {% endcomment %}
                     </div>
                 </div>
             </div>

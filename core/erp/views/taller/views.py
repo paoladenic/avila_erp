@@ -9,7 +9,7 @@ from django.template.loader import get_template
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from xhtml2pdf import pisa
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 
 from core.erp.forms import *
 from core.erp.mixins import ValidatePermissionRequiredMixin
@@ -31,14 +31,18 @@ class TrabajoListView2(LoginRequiredMixin, ValidatePermissionRequiredMixin, List
         data = {}
         try:
             action = request.POST['action']
+
             if action == 'searchdata':
                 data = []
-                for i in Trabajo2.objects.all().order_by('-id'):
+                for i in Trabajo2.objects.order_by('-id'):
                     data.append(i.toJSON())
+
             else:
                 data['error'] = 'Ha ocurrido un error'
+
         except Exception as e:
             data['error'] = str(e)
+
         return JsonResponse(data, safe=False)
 
     def get_context_data(self, **kwargs):
@@ -48,6 +52,27 @@ class TrabajoListView2(LoginRequiredMixin, ValidatePermissionRequiredMixin, List
         context['list_url'] = reverse_lazy('erp:trabajo_list2')
         context['entity'] = 'Trabajos'
         return context
+
+@csrf_exempt
+def update_status(request, trabajo_id):
+    if request.method == 'POST':
+        trabajo = get_object_or_404(Trabajo2, id=trabajo_id)  # Cambié Trabajo por Trabajo2 para ser consistente
+        nuevo_status = request.POST.get('status')
+        
+        if nuevo_status:
+            try:
+                # Buscar la instancia de StatusTrabajo por su nombre
+                status_instance = StatusTrabajo.objects.get(name=nuevo_status)
+                trabajo.status = status_instance
+                trabajo.save()
+                return JsonResponse({"message": "Estado actualizado correctamente"})
+            except StatusTrabajo.DoesNotExist:
+                return JsonResponse({"error": "El estado proporcionado no existe"}, status=400)
+        else:
+            return JsonResponse({"error": "No se proporcionó un nuevo estado"}, status=400)
+    return JsonResponse({"error": "Método no permitido"}, status=405)
+
+
 
 
 class TrabajoCreateView2(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):

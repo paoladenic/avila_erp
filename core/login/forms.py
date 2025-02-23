@@ -41,3 +41,4 @@ class ChangePasswordForm(forms.Form):
         if password != confirmPassword:
             raise forms.ValidationError('Las contraseñas deben ser iguales')
         return cleaned
+    

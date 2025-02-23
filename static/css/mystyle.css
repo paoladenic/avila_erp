@@ -37,3 +37,27 @@ td.details-control {
 tr.shown td.details-control {
     background: url('../lib/datatables-1.10.20/images/details_close.png') no-repeat center center;
 }
+
+/* Ajusta la altura y alineación del select2 */
+.select2-container--default .select2-selection--single {
+    height: 40px !important;         /* Altura del select */
+    padding: 5px 10px !important;    /* Espaciado interno */
+    display: flex !important;
+    align-items: center !important;  /* Centra el texto/badge verticalmente */
+    border-radius: 10px !important;  /* Bordes redondeados para mejor estética */
+}
+
+/* Ajusta el texto dentro del select2 */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: normal !important; /* Alineación vertical del texto */
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;        /* Centra horizontalmente */
+}
+
+/* Ajuste del icono desplegable */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100% !important;
+    right: 10px !important;
+}

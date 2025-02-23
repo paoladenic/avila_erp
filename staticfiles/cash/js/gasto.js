@@ -17,12 +17,13 @@ $(function () {
             {"data": "name"},
             {"data": "fecha_gasto"},
             {"data": "monto_gasto"},
-            {"data": "usuario"},
+            // {"data": "usuario"},
             {"data": "id"},
         ],
+        order: [[0, 'desc']], 
         columnDefs: [
             {
-                targets: [-3],
+                targets: [-2],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {

@@ -86,7 +86,14 @@ class TicketCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Crea
                 data = []
                 ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term'].strip()
-                products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
+                products = Product.objects.filter(
+                        stock__gt=0
+                ).filter(
+                        Q(name__icontains=term) |
+                        Q(sku__icontains=term) |
+                        Q(skuprove__icontains=term) |
+                        Q(id__iexact=term)
+                )
                 for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['value'] = i.name
@@ -96,8 +103,14 @@ class TicketCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Crea
                 ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term'].strip()
                 data.append({'id': term, 'text': term})
-                # products = Product.objects.filter(name__icontains=term, sku__icontains=term, stock__gt=0)
-                products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
+                products = Product.objects.filter(
+                        stock__gt=0
+                ).filter(
+                        Q(name__icontains=term) |
+                        Q(sku__icontains=term) |
+                        Q(skuprove__icontains=term) |
+                        Q(id__iexact=term)
+                )
                 for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['text'] = i.name
@@ -190,7 +203,14 @@ class TicketUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Upda
                 data = []
                 ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term'].strip()
-                products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
+                products = Product.objects.filter(
+                        stock__gt=0
+                ).filter(
+                        Q(name__icontains=term) |
+                        Q(sku__icontains=term) |
+                        Q(skuprove__icontains=term) |
+                        Q(id__iexact=term)
+                )
                 for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['value'] = i.name
@@ -201,8 +221,14 @@ class TicketUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Upda
                 ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term'].strip()
                 data.append({'id': term, 'text': term})
-                # products = Product.objects.filter(name__icontains=term, sku__icontains=term, stock__gt=0)
-                products = Product.objects.filter(stock__gt=0).filter(Q(name__icontains=term) | Q(sku__icontains=term))
+                products = Product.objects.filter(
+                        stock__gt=0
+                ).filter(
+                        Q(name__icontains=term) |
+                        Q(sku__icontains=term) |
+                        Q(skuprove__icontains=term) |
+                        Q(id__iexact=term)
+                )
                 for i in products.exclude(id__in=ids_exclude):
                     item = i.toJSON()
                     item['text'] = i.name

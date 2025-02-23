@@ -383,12 +383,6 @@ class TrabajoForm2(ModelForm):
         model = Trabajo2
         fields = '__all__'
         widgets = {
-            'numero': TextInput(
-                attrs={
-                    'placeholder': 'Ingrese el Número de Orden',
-                    'class': 'form-control',
-                }
-            ),
             'status': Select(
                 attrs={
                     'class': 'custom-select select2',
@@ -418,9 +412,9 @@ class TrabajoForm2(ModelForm):
                     'cols': 2
                 }
             ),
-            'presupuesto': TextInput(
+            'numero': TextInput(
                 attrs={
-                    'placeholder': 'A Pagar',
+                    'placeholder': 'No Necesario',
                     'class': 'form-control',
                 }
             ),

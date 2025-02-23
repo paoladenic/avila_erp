@@ -442,7 +442,7 @@ class GastoListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListVie
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for i in GastoCaja.objects.all().order_by('-fecha_gasto'):
+                for i in GastoCaja.objects.order_by('-id'):
                     data.append(i.toJSON())
             else:
                 data['error'] = 'Ha ocurrido un error'

@@ -144,6 +144,7 @@ function formatRepo(repo) {
         '<div class="col-lg-11 text-left shadow-sm">' +
         //'<br>' +
         '<p style="margin-bottom: 0;">' +
+        '<b>ID:</b> ' + repo.id + '<br>' +
         '<b>Nombre:</b> ' + repo.full_name + '<br>' +
         '<b>Stock:</b> ' + repo.stock + '<br>' +
         '<b>PVP:</b> <span class="badge badge-warning">$' + repo.pvp + '</span>' +
@@ -259,6 +260,7 @@ $(function () {
                 dataSrc: ""
             },
             columns: [
+                {"data": "id"},
                 {"data": "full_name"},
                 {"data": "image"},
                 {"data": "stock"},
@@ -388,7 +390,6 @@ $(function () {
 
     vents.list();
 });
-
 
 
 

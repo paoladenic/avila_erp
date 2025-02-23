@@ -60,7 +60,7 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     def get_image_url(self, image_field):
         if image_field:
             return '{}{}'.format(MEDIA_URL, image_field)
@@ -133,7 +133,7 @@ class Sale(models.Model):
         item['date_joined'] = self.date_joined.strftime('%Y-%m-%d')
         item['det'] = [i.toJSON() for i in self.detsale_set.all()]
         return item
-    
+
     def delete(self, using=None, keep_parents=False):
         for det in self.detsale_set.all():
             det.prod.stock += det.cant
@@ -188,10 +188,6 @@ class Ticket(models.Model):
         super(Ticket, self).save(*args, **kwargs)
         print(f"Post-save date_joined (stored): {self.date_joined}")
 
-    def save(self, *args, **kwargs):
-        super(Ticket, self).save(*args, **kwargs)
-        print(f"Post-save date_joined (stored): {self.date_joined}")
-
     def __str__(self):
         return f'Ticket # {self.id}'
 
@@ -211,7 +207,7 @@ class Ticket(models.Model):
         item['date_cash'] = self.date_cash.strftime('%Y-%m-%d')
         item['det'] = [i.toJSON() for i in self.detticket_set.all()]
         return item
-    
+
     def delete(self, using=None, keep_parents=False):
         for det in self.detticket_set.all():
             det.prod.stock += det.cant
@@ -289,37 +285,37 @@ class BanqueadoCaja(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username} - {self.fecha_banqueado} - {self.cierre_caja.monto_cierre}"
-    
+
     def toJSON(self):
         item = model_to_dict(self)
         item['usuario'] = self.usuario.username
         item['fecha_banqueado'] = self.fecha_banqueado.strftime('%Y-%m-%d')
-        item['monto_caja'] = float(self.monto_caja) 
-        item['total_gastos'] = float(self.total_gastos) 
+        item['monto_caja'] = float(self.monto_caja)
+        item['total_gastos'] = float(self.total_gastos)
         item['total_ventas_tarjeta'] = float(self.total_ventas_tarjeta)
-        item['total_ventas_efectivo'] = float(self.total_ventas_efectivo) 
-        item['diferencia_caja'] = float(self.diferencia_caja) 
-        item['cierre_caja'] = float(self.cierre_caja.monto_cierre) 
-        item['monto_banqueado'] = float(self.monto_banqueado) 
+        item['total_ventas_efectivo'] = float(self.total_ventas_efectivo)
+        item['diferencia_caja'] = float(self.diferencia_caja)
+        item['cierre_caja'] = float(self.cierre_caja.monto_cierre)
+        item['monto_banqueado'] = float(self.monto_banqueado)
         return item
-    
+
     class Meta:
         verbose_name = 'Banqueado'
         verbose_name_plural = 'Banqueados'
         ordering = ['-fecha_banqueado']
 
 class GastoCaja(models.Model):
-    usuario = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    # usuario = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=150, verbose_name='Descripción')
     fecha_gasto = models.DateField(default=datetime.now)
     monto_gasto = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.usuario.username} - {self.fecha_gasto}"
+        return self.id
 
     def toJSON(self):
         item = model_to_dict(self)
-        item['usuario'] = self.usuario.username
+        # item['usuario'] = self.usuario.username
         item['fecha_gasto'] = self.fecha_gasto.strftime('%Y-%m-%d')
         item['monto_gasto'] = self.monto_gasto
         return item
@@ -327,7 +323,7 @@ class GastoCaja(models.Model):
     class Meta:
         verbose_name = 'Gasto'
         verbose_name_plural = 'Gastos'
-        ordering = ['-fecha_gasto']
+        ordering = ['-id']
 
 class StatusTrabajo(models.Model):
     name = models.CharField(max_length=150, verbose_name='Status Trabajo', unique=True)
@@ -367,29 +363,29 @@ class ClienteTrabajo(models.Model):
         ordering = ['id']
 
 class Trabajo2(models.Model):
-    numero = models.CharField(max_length=10, unique=True, verbose_name='Número de Orden')
     status = models.ForeignKey(StatusTrabajo, on_delete=models.CASCADE, verbose_name='Status Trabajo')
     fecha_trabajo = models.DateField(default=datetime.now)
     cliente = models.ForeignKey(ClienteTrabajo, on_delete=models.CASCADE)
     detalle = models.CharField(max_length=700, verbose_name='Detalle')
-    image = models.ImageField(upload_to='taller/%Y/%m/%d', null=True, blank=True, verbose_name='Imagen')
-    presupuesto = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    # image = models.ImageField(upload_to='taller/%Y/%m/%d', null=True, blank=True, verbose_name='Imagen')
+    numero = models.CharField(max_length=10, verbose_name='Número de Orden', null=True, blank=True) #unique=True
+    # presupuesto = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
-        return self.cliente.names
-    
-    def get_image_url(self, image_field):
-        if image_field:
-            return '{}{}'.format(MEDIA_URL, image_field)
-        return '{}{}'.format(STATIC_URL, 'img/empty.png')
+        return self.id
+
+    # def get_image_url(self, image_field):
+    #     if image_field:
+    #         return '{}{}'.format(MEDIA_URL, image_field)
+    #     return '{}{}'.format(STATIC_URL, 'img/empty.png')
 
     def toJSON(self):
         item = model_to_dict(self)
         item['cliente'] = self.cliente.toJSON()
         item['fecha_trabajo'] = self.fecha_trabajo.strftime('%Y-%m-%d')
         item['status'] = self.status.name
-        item['image'] = self.get_image_url(self.image)
-        item['presupuesto'] = self.presupuesto
+        # item['image'] = self.get_image_url(self.image)
+        # item['presupuesto'] = self.presupuesto
         return item
 
     class Meta:
@@ -429,3 +425,58 @@ class Trabajo(models.Model):
         verbose_name = 'Trabajo'
         verbose_name_plural = 'Trabajos'
         ordering = ['-id']
+
+class Presu(models.Model):
+    id_taller = models.ForeignKey(Trabajo2, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Trabajo2, on_delete=models.CASCADE)
+    date_cash = models.DateField(default=datetime.now)
+    subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    iva = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+
+    def __str__(self):
+        return self.id
+
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['id_taller'] = self.id_taller.id
+        item['cliente'] = self.cliente.cliente
+        item['subtotal'] = format(self.subtotal, '.2f')
+        item['iva'] = format(self.iva, '.2f')
+        item['total'] = format(self.total, '.2f')
+        item['date_cash'] = self.date_cash.strftime('%Y-%m-%d')
+        item['det'] = [i.toJSON() for i in self.detpresu_set.all()]
+        return item
+
+    def delete(self, using=None, keep_parents=False):
+        for det in self.detpresu_set.all():
+            det.prod.stock += det.cant
+            det.prod.save()
+        super(Presu, self).delete()
+
+    class Meta:
+        verbose_name = 'Presupuesto'
+        verbose_name_plural = 'Presupuestos'
+        ordering = ['-id']
+
+class DetPresu(models.Model):
+    presu = models.ForeignKey(Presu, on_delete=models.CASCADE)
+    prod = models.ForeignKey(Product, on_delete=models.CASCADE)
+    price = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    cant = models.IntegerField(default=0)
+    subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+
+    def __str__(self):
+        return self.prod.name
+
+    def toJSON(self):
+        item = model_to_dict(self, exclude=['presu'])
+        item['prod'] = self.prod.toJSON()
+        item['price'] = format(self.price, '.2f')
+        item['subtotal'] = format(self.subtotal, '.2f')
+        return item
+
+    class Meta:
+        verbose_name = 'Detalle de Presupuestot'
+        verbose_name_plural = 'Detalle de Presupuestos'
+        ordering = ['id']

@@ -42,7 +42,6 @@ class ProductListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListV
         context['entity'] = 'Productos'
         return context
 
-
 class ProductCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm

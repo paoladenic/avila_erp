@@ -13,6 +13,7 @@ $(function () {
             dataSrc: ""
         },
         columns: [
+            {"data": "id"},
             {"data": "name"},
             {"data": "cat"},
             {"data": "sku"},
@@ -21,11 +22,12 @@ $(function () {
             {"data": "pc"},
             {"data": "pvp"},
             {"data": "proveedor"},
+            {"data": "skuprove"},
             {"data": "id"},
         ],
         columnDefs: [
             {
-                targets: [-6],
+                targets: [-7],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
@@ -34,7 +36,7 @@ $(function () {
                 }
             },
             {
-                targets: [-5],
+                targets: [-6],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
@@ -45,7 +47,7 @@ $(function () {
                 }
             },
             {
-                targets: [-3, -4],
+                targets: [-4, -5],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
@@ -53,7 +55,7 @@ $(function () {
                 }
             },
             {
-                targets: [-2],
+                targets: [-3],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {

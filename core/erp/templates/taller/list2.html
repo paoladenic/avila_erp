@@ -6,13 +6,14 @@
 
 {% block columns %}
     <tr>
-        <th scope="col" style="width: 6%;"># de Orden</th>
+        <th scope="col" style="width: 8%;">ID Orden</th>
         <th scope="col" style="width: 10%;">Status</th>
         <th scope="col" style="width: 8%;">Fecha</th>
         <th scope="col" style="width: 19%;">Cliente</th>
         <th scope="col" style="width: 31%;">Detalle</th>
-        <th scope="col" style="width: 8%;">Imagen</th>
-        <th scope="col" style="width: 8%;">A Pagar</th>
+        {% comment %} <th scope="col" style="width: 8%;">Imagen</th> {% endcomment %}
+        <th scope="col" style="width: 6%;"># Antiguo</th>
+        <th scope="col" style="width: 8%;">Presupuesto</th>
         <th scope="col" style="width: 10%;">Opciones</th>
     </tr>
 {% endblock %}

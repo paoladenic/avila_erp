@@ -67,6 +67,7 @@ urlpatterns = [
     path('taller/list2/', TrabajoListView2.as_view(), name='trabajo_list2'),
     path('taller/add2/', TrabajoCreateView2.as_view(), name='trabajo_create2'),
     path('taller/update2/<int:pk>/', TrabajoUpdateView2.as_view(), name='trabajo_update2'),
+    path("taller/update_status/<int:trabajo_id>/", update_status, name="update_status"),
     path('taller/delete2/<int:pk>/', TrabajoDeleteView2.as_view(), name='trabajo_delete2'),
     path('taller/invoice2/pdf/<int:pk>/', TrabajoInvoicePdfView2.as_view(), name='trabajo_invoice_pdf2'),
 ]

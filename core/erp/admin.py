@@ -16,5 +16,6 @@ admin.site.register(Ticket)
 admin.site.register(DetTicket)
 admin.site.register(StatusTrabajo)
 admin.site.register(Trabajo)
+admin.site.register(Trabajo2)
 admin.site.register(ClienteTrabajo)
 

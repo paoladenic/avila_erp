@@ -1,36 +1,8 @@
 var tblTicket;
 
-function format(d) {
-    console.log(d);
-    var html = '<table class="table">';
-    html += '<thead class="thead-dark">';
-    html += '<tr><th scope="col">Producto</th>';
-    html += '<th scope="col">Categoría</th>';
-    // html += '<th scope="col">Método de Pago</th>';
-    html += '<th scope="col">PVP</th>';
-    html += '<th scope="col">Cantidad</th>';
-    html += '<th scope="col">Subtotal</th></tr>';
-    html += '</thead>';
-    html += '<tbody>';
-    $.each(d.det, function (key, value) {
-        html+='<tr>'
-        html+='<td>'+value.prod.name+'</td>'
-        html+='<td>'+value.prod.cat+'</td>'
-        // html+='<td>'+value.tipo_pago.name+'</td>'
-        html+='<td>'+value.price+'</td>'
-        html+='<td>'+value.cant+'</td>'
-        html+='<td>'+value.subtotal+'</td>'
-        html+='</tr>';
-    });
-    html += '</tbody>';
-    return html;
-}
-
 $(function () {
-
     tblTicket = $('#data').DataTable({
-        //responsive: true,
-        scrollX: true,
+        responsive: true,
         autoWidth: false,
         destroy: true,
         deferRender: true,
@@ -43,12 +15,6 @@ $(function () {
             dataSrc: ""
         },
         columns: [
-            {
-                "className": 'details-control',
-                "orderable": false,
-                "data": null,
-                "defaultContent": ''
-            },
             {"data": "id"},
             {"data": "date_joined"},
             {"data": "tipo_pago"},
@@ -133,16 +99,5 @@ $(function () {
 
             $('#myModelDet').modal('show');
         })
-        .on('click', 'td.details-control', function () {
-            var tr = $(this).closest('tr');
-            var row = tblTicket.row(tr);
-            if (row.child.isShown()) {
-                row.child.hide();
-                tr.removeClass('shown');
-            } else {
-                row.child(format(row.data())).show();
-                tr.addClass('shown');
-            }
-        });
 
 });
